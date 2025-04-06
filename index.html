@@ -27,8 +27,8 @@
 
         .rectangle
         {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             background-color: rgba(255,204,0,0.1);
 
             margin: 5px;
@@ -42,7 +42,7 @@
             display: flex;
 
             color:white;
-            font-size: 25px;
+            font-size: 16px;
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         }
 
@@ -50,8 +50,7 @@
         {
             width: 30px;
             height: 30px;
-            background-color: #ffcc00;
-            opacity: 0.5;
+            background-color: rgba(255,204,0,0.1);
 
             text-align: center;
 
@@ -67,6 +66,7 @@
 
             font-size: 16px;
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            color:white;
 
             z-index: 1024;
         }
@@ -161,7 +161,15 @@
         </div>
         <div style="height:80px"></div>
 
-
+        <div class="centerRow">
+            <div id="btn_wave_sin" class="button">◯</div>
+            <div id="btn_wave_tri" class="button">△</div>
+            <div id="btn_wave_saw" class="button">◺</div>
+            <div id="btn_wave_sqr" class="button">▢</div>
+            <div style="width: 600px;"></div>
+            <div id="btn_freqconfig" class="button">-</div>
+            <div id="btn_adktSetup" class="button">=</div>
+        </div>
         <div class="centerRow" style="align-items: baseline;">
             <div id="rec_18" class="rectangle"><span>1</span></div>
             <div id="rec_19" class="rectangle"><span>2</span></div>
@@ -186,7 +194,7 @@
             <div id="rec_08" class="rectangle"><span>a</span></div>
             <div id="rec_09" class="rectangle"><span>s</span></div>
             <div id="rec_0A" class="rectangle"><span>d</span></div>
-            <div id="rec_0B" class="rectangle"><span>f</span></div>
+            <div id="rec_0B" class="rectangle"><span>[ f ]</span></div>
             <div id="rec_0C" class="rectangle"><span>g</span></div>
             <div id="rec_0D" class="rectangle"><span>h</span></div>
             <div id="rec_0E" class="rectangle"><span>j</span></div>
@@ -201,6 +209,19 @@
             <div id="rec_05" class="rectangle"><span>n</span></div>
             <div id="rec_06" class="rectangle"><span>m</span></div>
             <div id="rec_07" class="rectangle"><span>,</span></div>
+        </div>
+        <div class="centerRow">
+            <div id="btn_oct_d" class="button">oct ↓</div>
+            <div id="btn_oct_u" class="button">oct ↑</div>
+            <div id="btn_smi_d" class="button">semi ↓</div>
+            <div id="btn_smi_u" class="button">semi ↑</div>
+            <div style="width: 400px;"></div>
+            <div id="btn_mod_l" class="button">mod ←</div>
+            <div id="btn_prm_l" class="button">prm ←</div>
+            <div id="btn_prm_d" class="button">prm ↓</div>
+            <div id="btn_prm_u" class="button">prm ↑</div>
+            <div id="btn_prm_r" class="button">prm →</div>
+            <div id="btn_mod_r" class="button">mod →</div>
         </div>
         <div style="height:80px"></div>
         <div class="centerRow" style="display:flex;color:#606060;font-size:12px;width:1920px;">
@@ -371,22 +392,22 @@
 
         }
 
-        function POwO_musicButtonDown(event)
+        function POwO_musicButtonDown(InString)
         {
             for(let i = 0 ; i < Array_KeyPressString.length ; i++)
             {
-                if (event.key === Array_KeyPressString[i])
+                if (InString === Array_KeyPressString[i])
                 {
                     Array_KeyPressDetect[i] = 1;
                 }
             }
         }
 
-        function POwO_musicButtonUp(event)
+        function POwO_musicButtonUp(InString)
         {
             for(let i = 0 ; i < Array_KeyPressString.length ; i++)
             {
-                if (event.key === Array_KeyPressString[i])
+                if (InString === Array_KeyPressString[i])
                 {
                     Array_KeyPressDetect[i] = 0;
                 }
@@ -515,6 +536,25 @@
             Array+Array_KeyPressDetect.push(0);
         }
 
+        const btn_wave_sin = POwO_docgetel("btn_wave_sin")
+        const btn_wave_tri = POwO_docgetel("btn_wave_tri")
+        const btn_wave_saw = POwO_docgetel("btn_wave_saw")
+        const btn_wave_sqr = POwO_docgetel("btn_wave_sqr")
+
+        const btn_freqconfig = POwO_docgetel("btn_freqconfig")
+        const btn_adktSetup = POwO_docgetel("btn_adktSetup")
+
+        const btn_oct_d = POwO_docgetel("btn_oct_d");
+        const btn_oct_u = POwO_docgetel("btn_oct_u");
+        const btn_smi_d = POwO_docgetel("btn_smi_d");
+        const btn_smi_u = POwO_docgetel("btn_smi_u");
+        const btn_mod_l = POwO_docgetel("btn_mod_l");
+        const btn_prm_l = POwO_docgetel("btn_prm_l");
+        const btn_prm_d = POwO_docgetel("btn_prm_d");
+        const btn_prm_u = POwO_docgetel("btn_prm_u");
+        const btn_prm_r = POwO_docgetel("btn_prm_r");
+        const btn_mod_r = POwO_docgetel("btn_mod_r");
+
         const field_osc_octave  = POwO_docgetel("field_osc_octave")
         const field_osc_edotone = POwO_docgetel("field_osc_edotone")
         const field_osc_type    = POwO_docgetel("field_osc_type")
@@ -632,41 +672,90 @@
         let CONTROL_index_0 = 0;
         let CONTROL_index_1 = 3;
 
-        //---- ---- ---- ---- runtime flow
 
-        
-        
+
+
+        //---- ---- ---- ---- InterfaceControl
+
+        function POwO_InterfaceControl_Down(InString)
+        {
+            console.log("got Interface : " + InString)
+
+            POwO_musicButtonDown(InString);
+
+            if (InString === "="){POwO_adktSetup()}
+            else if (InString === "-"){POwO_setOscFreq();}
+            else if (InString === "!"){POwO_setOscType("sine")}
+            else if (InString === "@"){POwO_setOscType("triangle")}
+            else if (InString === "#"){POwO_setOscType("sawtooth")}
+            else if (InString === "$"){POwO_setOscType("square")}
+            else if (InString === "Z"){POwO_musicAllNotesMigrate(0.5); field_osc_octave.textContent = Number(field_osc_octave.textContent)-1 }
+            else if (InString === "X"){POwO_musicAllNotesMigrate(2); field_osc_octave.textContent = Number(field_osc_octave.textContent)+1 }
+            else if (InString === "C"){POwO_musicAllNotesMigrate(1/(2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)-1}
+            else if (InString === "V"){POwO_musicAllNotesMigrate((2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)+1}
+            else if (InString === "B"){POwO_control_ModL()}
+            else if (InString === "N"){POwO_control_PrmL()}
+            else if (InString === "M"){POwO_control_Change("-")}
+            else if (InString === "<"){POwO_control_Change("+")}
+            else if (InString === ">"){POwO_control_PrmR()}
+            else if (InString === "?"){POwO_control_ModR()}
+            
+            
+        }
+
+        function POwO_InterfaceControl_Up(InString)
+        {
+            POwO_musicButtonUp(InString);
+        }
+
+
+
+
+
+        //---- ---- ---- ---- keyboard controls
 
         document.addEventListener("keydown", (event) =>
         {
             console.log("got Keypress : " + event.key)
-
-            POwO_musicButtonDown(event);
-
-            if (event.key === "="){POwO_adktSetup()}
-            else if (event.key === "Z"){POwO_musicAllNotesMigrate(0.5); field_osc_octave.textContent = Number(field_osc_octave.textContent)-1 }
-            else if (event.key === "X"){POwO_musicAllNotesMigrate(2); field_osc_octave.textContent = Number(field_osc_octave.textContent)+1 }
-            else if (event.key === "C"){POwO_musicAllNotesMigrate(1/(2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)-1}
-            else if (event.key === "V"){POwO_musicAllNotesMigrate((2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)+1}
-            else if (event.key === "B"){POwO_control_ModL()}
-            else if (event.key === "N"){POwO_control_PrmL()}
-            else if (event.key === "M"){POwO_control_Change("-")}
-            else if (event.key === "<"){POwO_control_Change("+")}
-            else if (event.key === ">"){POwO_control_PrmR()}
-            else if (event.key === "?"){POwO_control_ModR()}
-            //else if (event.key === "9"){}
-            //else if (event.key === "0"){POwO_Action_KeyTextToggle()}
-            else if (event.key === "-"){POwO_setOscFreq([]);}
-            else if (event.key === "!"){POwO_setOscType("sine")}
-            else if (event.key === "@"){POwO_setOscType("triangle")}
-            else if (event.key === "#"){POwO_setOscType("sawtooth")}
-            else if (event.key === "$"){POwO_setOscType("square")}
+            POwO_InterfaceControl_Down(event.key)
         });
 
         document.addEventListener("keyup", (event) =>
         {
-            POwO_musicButtonUp(event);
+            POwO_InterfaceControl_Up(event.key)
         });
+
+
+
+        //---- ---- ---- ---- mobile controls
+
+        for(let i = 0 ; i < Array_Rectangles.length ; i++)
+        {
+            Array_Rectangles[i].addEventListener("touchstart",()=>{ POwO_InterfaceControl_Down(Array_KeyPressString[i]); })
+            Array_Rectangles[i].addEventListener("touchend",()=>{ POwO_InterfaceControl_Up(Array_KeyPressString[i]); })
+        }
+        btn_adktSetup.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("=")})
+        btn_freqconfig.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("-")})
+        btn_wave_sin.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("!") })
+        btn_wave_tri.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("@")})
+        btn_wave_saw.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("#")})
+        btn_wave_sqr.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("$")})
+
+        btn_oct_d.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("Z")})
+        btn_oct_u.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("X")})
+        btn_smi_d.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("C")})
+        btn_smi_u.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("V")})
+
+        btn_mod_l.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("B")})
+        btn_prm_l.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("N")})
+        btn_prm_d.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("M")})
+        btn_prm_u.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("<")})
+        btn_prm_r.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down(">")})
+        btn_mod_r.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("?")})
+
+
+
+        //---- ---- ---- ---- runtime trigger
 
         setInterval(function(){
             if (isREADY)
