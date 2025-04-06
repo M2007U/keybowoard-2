@@ -32,7 +32,7 @@
             background-color: rgba(255,204,0,0.1);
 
             margin: 5px;
-            border: 1px solid rgba(255,204,0,1);
+            border: 0px solid rgba(255,204,0,1);
             border-collapse: collapse;
             border-radius: 10px;
             
@@ -133,8 +133,8 @@
                 </select>]&nbsp&nbsp
                 [edo : <input type="number" id="field_osc_edo" min="1" step="1" placeholder="notes per octave" value="12">]&nbsp&nbsp
                 [fund : <input type="number" id="field_osc_fund" min="0.00390625" step="0.00390625" placeholder="fundamental freq" value="523.2511">]&nbsp&nbsp
-                [freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="3">]&nbsp&nbsp
-                [freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="5">]
+                [freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="1.5">]&nbsp&nbsp
+                [freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="1.25">]
                 <br>
 
                 ADSR = &nbsp&nbsp
@@ -158,7 +158,7 @@
                 <br>
             </span>
         </div>
-        <div style="height:200px"></div>
+        <div style="height:160px"></div>
 
 
         <div class="centerRow" style="align-items: baseline;">
@@ -200,6 +200,16 @@
             <div id="rec_05" class="rectangle"><span>n</span></div>
             <div id="rec_06" class="rectangle"><span>m</span></div>
             <div id="rec_07" class="rectangle"><span>,</span></div>
+        </div>
+        <div style="height:160px"></div>
+        <div class="centerRow" style="display:flex;color:#606060;font-size:16px;width:1920px;">
+            <span style="text-align: center;">
+                <br>
+                [! : ◯]&nbsp&nbsp&nbsp[@ : △]&nbsp&nbsp&nbsp[# : ◺]&nbsp&nbsp&nbsp[$ : ▢]&nbsp&nbsp&nbsp[0 : Toggle KeyText]&nbsp&nbsp&nbsp<text id="field_adktSetup" style="color:#600000;">[= : start / power / setup (MANDATORY)]</text><br>
+                [z : oct ↓] &nbsp&nbsp&nbsp [x : oct ↑] &nbsp&nbsp&nbsp [c : trans ↓] &nbsp&nbsp&nbsp [v : trans ↑]  &nbsp&nbsp&nbsp 
+                [b : module ←] &nbsp&nbsp&nbsp [n : param ←] &nbsp&nbsp&nbsp [m : param ↓] &nbsp&nbsp&nbsp [, : param ↑] &nbsp&nbsp&nbsp [. : param →] &nbsp&nbsp&nbsp [/ : module →] &nbsp&nbsp&nbsp [- : configure layout]<br>
+                
+            </span>
         </div>
         
     </div>
@@ -249,6 +259,11 @@
         function POwO_setOscFreq(InExplicitList)
         {
             GLOBAL_freq = [];
+            GLOBAL_freqFund = field_osc_fund.value;
+            GLOBAL_layout = field_osc_layout.value;
+            GLOBAL_edo = field_osc_edo.value;
+            GLOBAL_freq_facX = field_osc_freqX.value;
+            GLOBAL_freq_facY = field_osc_freqY.value;
 
             if (GLOBAL_layout === "1D")
             {
@@ -339,7 +354,7 @@
 
             // connect successfuly, ready
             console.log("READY")
-            //field_adktSetup.style.color = "#006000"
+            field_adktSetup.style.color = "#006000"
             isREADY = true;
 
         }
@@ -492,6 +507,7 @@
         const field_osc_edotone = POwO_docgetel("field_osc_edotone")
         const field_osc_type    = POwO_docgetel("field_osc_type")
         const field_osc_edo     = POwO_docgetel("field_osc_edo")
+        const field_osc_layout  = POwO_docgetel("field_osc_layout")
         const field_osc_fund    = POwO_docgetel("field_osc_fund")
         const field_osc_freqX   = POwO_docgetel("field_osc_freqX")
         const field_osc_freqY   = POwO_docgetel("field_osc_freqY")
@@ -511,6 +527,7 @@
         const field_filter_hghshlf_gain = POwO_docgetel("field_filter_hghshlf_gain");
 
         const field_control_currentChoice = POwO_docgetel("CONTROL_print")
+        const field_adktSetup = POwO_docgetel("field_adktSetup")
 
 
         //frequency related stuffs
@@ -626,6 +643,7 @@
             else if (event.key === "?"){POwO_control_ModR()}
             //else if (event.key === "9"){}
             //else if (event.key === "0"){POwO_Action_KeyTextToggle()}
+            else if (event.key === "-"){POwO_setOscFreq([]);}
             else if (event.key === "!"){POwO_setOscType("sine")}
             else if (event.key === "@"){POwO_setOscType("triangle")}
             else if (event.key === "#"){POwO_setOscType("sawtooth")}
