@@ -152,12 +152,36 @@
 
         //---- ---- ---- ---- function declare
 
-        POwO_docgetel(InString)
+        function POwO_docgetel(InString)
         {
             return document.getElementById(InString);
         }
 
-        POwO_setFreq
+        function POwO_Math_Clamp(InMin, InVal, InMax)
+        {
+            
+            //return Math.max(InMin, Math.min(InVal, InMax) );
+            if (InVal > InMax)
+            {
+                return InMax;
+            }
+            else if (InVal < InMin)
+            {
+                return InMin;
+            }
+            else
+            {
+                return InVal;
+            }
+
+        }
+
+        function POwO_Math_LERP(A, B, t)
+        {
+            return (B-A) * t + A
+        }
+
+        function POwO_setOscFreq
         (
             InArrayFreq , InLayout , InFreqFund ,
             InEdo ,
@@ -170,7 +194,7 @@
 
             if (InLayout === "1D")
             {
-                for(let i = 0 ; i < Array_Rectangles.length() ; i++)
+                for(let i = 0 ; i < Array_Rectangles.length ; i++)
                 {
                     InArrayFreq.push(InFreqFund * (2 ** (i/InEdo)))
                 }
@@ -189,17 +213,87 @@
             }
             else if (InLayout === "explicit")
             {
-                if (InExplicitList.length() === InArrayOsc.length())
+                if (InExplicitList.length === InArrayOsc.length)
                 {
                     InArrayFreq = InExplicitList
                 }
             }
 
-            for(let i = 0 ; i < InArrayOsc.length() ; i++)
+            for(let i = 0 ; i < InArrayOsc.length ; i++)
             {
                 InArrayOsc[i].frequency.setValueAtTime(InArrayFreq[i],adkt.currentTime)
             }
 
+        }
+
+        function POwO_setOscType(Instring)
+        {
+            for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
+            {
+                Array_AudioNodes_osc[i].type = Instring;
+            }
+        }
+
+        async function POwO_adktSetup()
+        {
+            //start the adkt
+            await adkt.resume();
+
+            //deal with oscilator
+            POwO_setOscType("square")
+            for(var i  = 0; i < Array_AudioNodes_adsr.length ; i++)
+            {
+                Array_AudioNodes_adsr[i].gain.setValueAtTime(0,adkt.currentTime);
+            }
+            POwO_setOscFreq(GLOBAL_freq, GLOBAL_layout,  GLOBAL_freqFund, GLOBAL_edo, GLOBAL_freq_facX , GLOBAL_freq_facY, [] , Array_AudioNodes_osc);
+            AudioNodes_gain.gain.setValueAtTime(0.1,adkt.currentTime);
+            
+
+            //connect everything
+            for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
+            {
+                Array_AudioNodes_osc[i].connect( Array_AudioNodes_adsr[i] );
+                Array_AudioNodes_adsr[i].connect( AudioNodes_gain );
+            }
+
+            //start all the oscillators
+            for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
+            {
+                Array_AudioNodes_osc[i].start();
+            }
+
+            // connect successfuly, ready
+            console.log("READY")
+            //field_adktSetup.style.color = "#006000"
+            isREADY = true;
+
+        }
+
+        function POwO_musicButtonDown(event)
+        {
+            for(let i = 0 ; i < Array_KeyPressString.length ; i++)
+            {
+                if (event.key === Array_KeyPressString[i])
+                {
+                    Array_KeyPressDetect[i] = 1;
+                }
+            }
+        }
+
+        function POwO_musicButtonUp(event)
+        {
+            for(let i = 0 ; i < Array_KeyPressString.length ; i++)
+            {
+                if (event.key === Array_KeyPressString[i])
+                {
+                    Array_KeyPressDetect[i] = 0;
+                }
+            }
+        }
+
+        function POwO_musicOctaveUp()
+        {
+           
         }
 
 
@@ -227,6 +321,11 @@
             POwO_docgetel("rec_18") , POwO_docgetel("rec_19") , POwO_docgetel("rec_1A") , POwO_docgetel("rec_1B") ,
             POwO_docgetel("rec_1C") , POwO_docgetel("rec_1D") , POwO_docgetel("rec_1E") , POwO_docgetel("rec_1F")
         ]
+        var Array_KeyPressDetect = [];
+        for(let i = 0 ; i < Array_KeyPressString.length ; i ++)
+        {
+            Array+Array_KeyPressDetect.push(0);
+        }
 
         //frequency related stuffs
         var GLOBAL_edo = 12;
@@ -235,7 +334,15 @@
         var GLOBAL_freq_facY = 5; 
         var GLOBAL_freq = [];
         var GLOBAL_layout = "1D" //can be 1D or 2D
-        
+
+        //adsr related stuffs
+        var GLOBAL_adsr_atk = 1;
+        var GLOBAL_adsr_sus = 1;
+        var GLOBAL_adsr_rel = 1;
+        var GLOBAL_adsr_dlt = 1/256;
+
+        //main volume
+        var GLOBAL_vol_dlt = 1/256;
         
 
 
@@ -243,6 +350,7 @@
         //---- ---- ---- ---- construct audio context
 
         //audio context
+        var isREADY = false;
         const adkt = new (window.AudioContext || window.webkitAudioContext)();
         console.log("new audioKontext");
 
@@ -255,23 +363,84 @@
 
         //oscilators
         var Array_AudioNodes_osc = []
-        for(let i = 0 ; i < Array_Rectangles.length() ; i++)
+        for(let i = 0 ; i < Array_Rectangles.length ; i++)
         {
             Array_AudioNodes_osc.push(adkt.createOscillator());
         }
 
         //adsr
         var Array_AudioNodes_adsr = []
-        for(let i = 0 ; i < Array_Rectangles.length() ; i++)
+        for(let i = 0 ; i < Array_Rectangles.length ; i++)
         {
             Array_AudioNodes_adsr.push(adkt.createGain());
         }
+
+        //main volume
+        var AudioNodes_gain = adkt.createGain()
+        AudioNodes_gain.connect(adkt.destination);
 
         //---- ---- ---- ---- runtime flow
 
         
         
-        POwO_setFreq(GLOBAL_freq, GLOBAL_layout,  GLOBAL_freqFund, GLOBAL_edo, GLOBAL_freq_facX , GLOBAL_freq_facY);
+
+        document.addEventListener("keydown", (event) =>
+        {
+            // for(let i = 0 ; i < recAll.length ; i++)
+            // {
+            //     POwO_ifKeyDownSetFlex(event, chaAll[i], recAll[i]);
+            // }
+
+            POwO_musicButtonDown(event);
+
+            if (event.key === "="){POwO_adktSetup()}
+            //else if (event.key === "c"){POwO_Action_SemiDown()}
+            //else if (event.key === "v"){POwO_Action_SemiUp()}
+            //else if (event.key === "z"){POwO_Action_OctaveDown()}
+            //else if (event.key === "x"){POwO_Action_OctaveUp()}
+            //else if (event.key === "b"){POwO_Action_ModL()}
+            //else if (event.key === "n"){POwO_Action_PrmL()}
+            //else if (event.key === "m"){POwO_Param_Change("-")}
+            //else if (event.key === ","){POwO_Param_Change("+")}
+            //else if (event.key === "."){POwO_Action_PrmR()}
+            //else if (event.key === "/"){POwO_Action_ModR() }
+            //else if (event.key === "9"){}
+            //else if (event.key === "0"){POwO_Action_KeyTextToggle()}
+            //else if (event.key === "1"){POwO_Action_TypeSin()}
+            //else if (event.key === "2"){POwO_Action_TypeTri()}
+            //else if (event.key === "3"){POwO_Action_TypeSaw()}
+            //else if (event.key === "4"){POwO_Action_TypeSqr()}
+        });
+
+        document.addEventListener("keyup", (event) =>
+        {
+            POwO_musicButtonUp(event);
+        });
+
+        setInterval(function(){
+            if (isREADY)
+            {
+                for(var i = 0 ; i < Array_Rectangles.length ; i++)
+                {
+                    var TargetGain = Array_AudioNodes_adsr[i].gain.value;
+                    if (Array_KeyPressDetect[i] === 1)
+                    {
+                        TargetGain = POwO_Math_Clamp(0,TargetGain + GLOBAL_adsr_atk, GLOBAL_adsr_sus);
+                    }
+                    else
+                    {
+                        TargetGain = POwO_Math_Clamp(0,TargetGain - GLOBAL_adsr_rel,1);
+                    }
+
+                    Array_AudioNodes_adsr[i].gain.setValueAtTime(  TargetGain, adkt.currentTime );
+
+                    Array_Rectangles[i].style.backgroundColor = "rgba(255,204,0," + (POwO_Math_LERP(0.1,1,TargetGain)).toString() + ")" 
+                }
+                
+            }
+        },10)
+
+        
         
         
 
