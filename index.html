@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>keybOwOard</title>
+    <style>
+    
+        .centerContainer
+        {
+            position: fixed;
+            justify-content: center;
+            align-items: center;
+            top:50%;
+            left: 50%;
+            transform:translate(-50%,-50%);
+            
+        }
+
+        .centerRow
+        {
+            display:flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rectangle
+        {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255,204,0,0.1);
+
+            margin: 5px;
+            border: 1px solid rgba(255,204,0,1);
+            border-collapse: collapse;
+            border-radius: 10px;
+            
+            justify-content: center;
+            align-items: center;
+            
+            display: flex;
+
+            color:white;
+            font-size: 16px;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        .button
+        {
+            width: 30px;
+            height: 30px;
+            background-color: #ffcc00;
+            opacity: 0.5;
+
+            text-align: center;
+
+            margin: 5px;
+            border: 5px solid transparent;
+            border-collapse: collapse;
+            border-radius: 10px;
+            
+            justify-content: center;
+            align-items: center;
+            
+            display: flex;
+
+            font-size: 16px;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+            z-index: 1024;
+        }
+
+        .bar
+        {
+            width : 40px;
+            height : 200px;
+            background-color: #ffcc00;
+
+            margin: 5px;
+            border: 0px solid transparent;
+            border-collapse: collapse;
+            border-radius: 10px;
+        }
+
+        .blank
+        {
+            width: 60px;
+            height: 60px;
+
+            margin: 10px;
+        }
+
+    </style>
+</head>
+<body  style="background-color: black ;font-family:Calibri, Consolas, 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;">
+
+
+    <div class="centerContainer">
+        <div class="centerRow" style="align-items: baseline;">
+            <div id="rec_18" class="rectangle"><span>1</span></div>
+            <div id="rec_19" class="rectangle"><span>2</span></div>
+            <div id="rec_1A" class="rectangle"><span>3</span></div>
+            <div id="rec_1B" class="rectangle"><span>4</span></div>
+            <div id="rec_1C" class="rectangle"><span>5</span></div>
+            <div id="rec_1D" class="rectangle"><span>6</span></div>
+            <div id="rec_1E" class="rectangle"><span>7</span></div>
+            <div id="rec_1F" class="rectangle"><span>8</span></div>
+        </div>
+        <div class="centerRow" style="align-items: baseline;">
+            <div id="rec_10" class="rectangle"><span>q</span></div>
+            <div id="rec_11" class="rectangle"><span>w</span></div>
+            <div id="rec_12" class="rectangle"><span>e</span></div>
+            <div id="rec_13" class="rectangle"><span>r</span></div>
+            <div id="rec_14" class="rectangle"><span>t</span></div>
+            <div id="rec_15" class="rectangle"><span>y</span></div>
+            <div id="rec_16" class="rectangle"><span>u</span></div>
+            <div id="rec_17" class="rectangle"><span>i</span></div>
+        </div>
+        <div class="centerRow" style="align-items: baseline;">
+            <div id="rec_08" class="rectangle"><span>a</span></div>
+            <div id="rec_09" class="rectangle"><span>s</span></div>
+            <div id="rec_0A" class="rectangle"><span>d</span></div>
+            <div id="rec_0B" class="rectangle"><span>f</span></div>
+            <div id="rec_0C" class="rectangle"><span>g</span></div>
+            <div id="rec_0D" class="rectangle"><span>h</span></div>
+            <div id="rec_0E" class="rectangle"><span>j</span></div>
+            <div id="rec_0F" class="rectangle"><span>k</span></div>
+        </div>
+        <div class="centerRow" style="align-items: baseline;">
+            <div id="rec_00" class="rectangle"><span>z</span></div>
+            <div id="rec_01" class="rectangle"><span>x</span></div>
+            <div id="rec_02" class="rectangle"><span>c</span></div>
+            <div id="rec_03" class="rectangle"><span>v</span></div>
+            <div id="rec_04" class="rectangle"><span>b</span></div>
+            <div id="rec_05" class="rectangle"><span>n</span></div>
+            <div id="rec_06" class="rectangle"><span>m</span></div>
+            <div id="rec_07" class="rectangle"><span>,</span></div>
+        </div>
+        
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <script>
+
+        //---- ---- ---- ---- function declare
+
+        POwO_docgetel(InString)
+        {
+            return document.getElementById(InString);
+        }
+
+        POwO_setFreq
+        (
+            InArrayFreq , InLayout , InFreqFund ,
+            InEdo ,
+            InFreqX , InFreqY,
+            InExplicitList,
+            InArrayOsc
+        )
+        {
+            InArrayFreq = [];
+
+            if (InLayout === "1D")
+            {
+                for(let i = 0 ; i < Array_Rectangles.length() ; i++)
+                {
+                    InArrayFreq.push(InFreqFund * (2 ** (i/InEdo)))
+                }
+            }
+            else if (InLayout === "2D")
+            {
+                for(let i = 0 ; i < 4 ; i++)
+                {
+                    for(let j = 0 ; j < 8 ; j++)
+                    {
+                        //i = 0 : box * (freqX ^ -1)
+                        //j = 0 : box * (freY ^ -3)
+                        InArrayFreq.push( InFreqFund * ( InFreqY ** (i-1) ) * ( InFreqX ** (j-3)) )
+                    }
+                }
+            }
+            else if (InLayout === "explicit")
+            {
+                if (InExplicitList.length() === InArrayOsc.length())
+                {
+                    InArrayFreq = InExplicitList
+                }
+            }
+
+            for(let i = 0 ; i < InArrayOsc.length() ; i++)
+            {
+                InArrayOsc[i].frequency.setValueAtTime(InArrayFreq[i],adkt.currentTime)
+            }
+
+        }
+
+
+
+
+
+
+
+
+        //---- ---- ---- ---- global vars
+
+        //html css related stuff
+        var COLOR_ON = "1"
+        var COLOR_OFF = "0.1"
+        var Array_KeyPressString = ["z","x","c","v","b","n","m",",","a","s","d","f","g","h","j","k","q","w","e","r","t","y","u","i","1","2","3","4","5","6","7","8"]
+        var Array_Rectangles =
+        [
+            POwO_docgetel("rec_00") , POwO_docgetel("rec_01") , POwO_docgetel("rec_02") , POwO_docgetel("rec_03") ,
+            POwO_docgetel("rec_04") , POwO_docgetel("rec_05") , POwO_docgetel("rec_06") , POwO_docgetel("rec_07") ,
+            POwO_docgetel("rec_08") , POwO_docgetel("rec_09") , POwO_docgetel("rec_0A") , POwO_docgetel("rec_0B") ,
+            POwO_docgetel("rec_0C") , POwO_docgetel("rec_0D") , POwO_docgetel("rec_0E") , POwO_docgetel("rec_0F") ,
+
+            POwO_docgetel("rec_10") , POwO_docgetel("rec_11") , POwO_docgetel("rec_12") , POwO_docgetel("rec_13") ,
+            POwO_docgetel("rec_14") , POwO_docgetel("rec_15") , POwO_docgetel("rec_16") , POwO_docgetel("rec_17") ,
+            POwO_docgetel("rec_18") , POwO_docgetel("rec_19") , POwO_docgetel("rec_1A") , POwO_docgetel("rec_1B") ,
+            POwO_docgetel("rec_1C") , POwO_docgetel("rec_1D") , POwO_docgetel("rec_1E") , POwO_docgetel("rec_1F")
+        ]
+
+        //frequency related stuffs
+        var GLOBAL_edo = 12;
+        var GLOBAL_freqFund = 523.2511;
+        var GLOBAL_freq_facX = 3;
+        var GLOBAL_freq_facY = 5; 
+        var GLOBAL_freq = [];
+        var GLOBAL_layout = "1D" //can be 1D or 2D
+        
+        
+
+
+
+        //---- ---- ---- ---- construct audio context
+
+        //audio context
+        const adkt = new (window.AudioContext || window.webkitAudioContext)();
+        console.log("new audioKontext");
+
+
+
+        const adkt_dummy_osc  = adkt.createOscillator();
+        const adkt_dummy_adsr = adkt.createGain();
+
+
+
+        //oscilators
+        var Array_AudioNodes_osc = []
+        for(let i = 0 ; i < Array_Rectangles.length() ; i++)
+        {
+            Array_AudioNodes_osc.push(adkt.createOscillator());
+        }
+
+        //adsr
+        var Array_AudioNodes_adsr = []
+        for(let i = 0 ; i < Array_Rectangles.length() ; i++)
+        {
+            Array_AudioNodes_adsr.push(adkt.createGain());
+        }
+
+        //---- ---- ---- ---- runtime flow
+
+        
+        
+        POwO_setFreq(GLOBAL_freq, GLOBAL_layout,  GLOBAL_freqFund, GLOBAL_edo, GLOBAL_freq_facX , GLOBAL_freq_facY);
+        
+        
+
+
+    </script>
+</body>
