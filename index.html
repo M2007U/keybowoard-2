@@ -22,6 +22,7 @@
             display:flex;
             justify-content: center;
             align-items: center;
+            
         }
 
         .rectangle
@@ -90,12 +91,76 @@
             margin: 10px;
         }
 
+        input[type="number"] {
+            padding: 4px;
+            font-size: 16px;
+            border: 1px solid #666;
+            border-radius: 5px;
+            width: 50px;
+            background-color: rgba(96,96,96,0);
+            color:#666;
+        }
+
+        select {
+            padding: 4px;
+            font-size: 16px;
+            border: 1px solid #666;
+            border-radius: 5px;
+            background-color:rgba(96,96,96,0);
+            width: 50px;
+            color:#666
+        }
+
     </style>
 </head>
 <body  style="background-color: black ;font-family:Calibri, Consolas, 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;">
 
 
     <div class="centerContainer">
+        <div class="centerRow" style="display:flex;color:#666;font-size:16px;width:1920px;">
+            <span style="text-align: center;">
+                ver 2025.0406.0021 <br>
+                OSC = &nbsp&nbsp
+                [oct : <text id="field_osc_octave">5</text>]&nbsp&nbsp
+                [edotone : <text id="field_osc_edotone">0</text>]&nbsp&nbsp
+                [type : <text id="field_osc_type">square</text>]&nbsp&nbsp
+
+                [layout : 
+                <select id="field_osc_layout">
+                    <option value="1D">1D</option>
+                    <option value="2D">2D</option>
+                    <option value="explicit">Explicit</option>
+                </select>]&nbsp&nbsp
+                [edo : <input type="number" id="field_osc_edo" min="1" step="1" placeholder="notes per octave" value="12">]&nbsp&nbsp
+                [fund : <input type="number" id="field_osc_fund" min="0.00390625" step="0.00390625" placeholder="fundamental freq" value="523.2511">]&nbsp&nbsp
+                [freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="3">]&nbsp&nbsp
+                [freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="5">]
+                <br>
+
+                ADSR = &nbsp&nbsp
+                [atk : <text id="field_adsr_atk">1</text>]&nbsp&nbsp
+                [sus : <text id="field_adsr_sus">1</text>]&nbsp&nbsp
+                [rel : <text id="field_adsr_rel">1</text>]&nbsp&nbsp
+                [vol : <text id="field_adsr_vol">0.125</text>]<br>
+                
+                FILTER = &nbsp&nbsp
+                [lowpass > freq : <text id="field_filter_lowpass_freq">20000</text>]&nbsp&nbsp
+                [lowpass > reso : <text id="field_filter_lowpass_reso">1</text>]&nbsp&nbsp
+                [hghpass > freq : <text id="field_filter_hghpass_freq">0</text>]&nbsp&nbsp
+                [hghpass > reso : <text id="field_filter_hghpass_reso">1</text>]&nbsp&nbsp
+                [lowshlf > freq : <text id="field_filter_lowshlf_freq">0</text>]&nbsp&nbsp
+                [lowshlf > gain : <text id="field_filter_lowshlf_gain">0</text>]&nbsp&nbsp
+                [hghshlf > freq : <text id="field_filter_hghshlf_freq">20000</text>]&nbsp&nbsp
+                [hghshlf > gain : <text id="field_filter_hghshlf_gain">0</text>]<br>
+                <br>
+                <text style="color:#403000;">[Currently Adjusting : <text  id="CONTROL_print">ASDR > overall</text>]</text>
+
+                <br>
+            </span>
+        </div>
+        <div style="height:200px"></div>
+
+
         <div class="centerRow" style="align-items: baseline;">
             <div id="rec_18" class="rectangle"><span>1</span></div>
             <div id="rec_19" class="rectangle"><span>2</span></div>
@@ -224,6 +289,8 @@
             {
                 Array_AudioNodes_osc[i].type = Instring;
             }
+
+            field_osc_type.textContent = Instring;
         }
 
         async function POwO_adktSetup()
@@ -238,15 +305,31 @@
                 Array_AudioNodes_adsr[i].gain.setValueAtTime(0,adkt.currentTime);
             }
             POwO_setOscFreq(GLOBAL_freq, GLOBAL_layout,  GLOBAL_freqFund, GLOBAL_edo, GLOBAL_freq_facX , GLOBAL_freq_facY, [] , Array_AudioNodes_osc);
+            
+
+            //deal with filter
+            AudioNodes_filter[0].gain.setValueAtTime(1,adkt.currentTime);
+            AudioNodes_filter[1].type = 'lowpass';  AudioNodes_filter[1].frequency.setValueAtTime(20000   ,adkt.currentTime);    AudioNodes_filter[1].Q.setValueAtTime(1,adkt.currentTime);
+            AudioNodes_filter[2].type = 'highpass'; AudioNodes_filter[2].frequency.setValueAtTime(0       ,adkt.currentTime);    AudioNodes_filter[2].Q.setValueAtTime(1,adkt.currentTime);
+            AudioNodes_filter[3].type = 'lowshelf'; AudioNodes_filter[3].frequency.setValueAtTime(20000   ,adkt.currentTime);    AudioNodes_filter[3].gain.setValueAtTime(0,adkt.currentTime);
+            AudioNodes_filter[4].type = 'highshelf';AudioNodes_filter[4].frequency.setValueAtTime(0       ,adkt.currentTime);    AudioNodes_filter[4].gain.setValueAtTime(0,adkt.currentTime);
+
             AudioNodes_gain.gain.setValueAtTime(0.1,adkt.currentTime);
+
             
 
             //connect everything
             for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
             {
                 Array_AudioNodes_osc[i].connect( Array_AudioNodes_adsr[i] );
-                Array_AudioNodes_adsr[i].connect( AudioNodes_gain );
+                Array_AudioNodes_adsr[i].connect( AudioNodes_filter[0] );
             }
+            for(let i = 0 ; i < AudioNodes_filter.length - 1 ; i++)
+            {
+                AudioNodes_filter[i].connect(AudioNodes_filter[i+1]);
+            }
+            AudioNodes_filter[5].connect(AudioNodes_gain)
+            AudioNodes_gain.connect(adkt.destination);
 
             //start all the oscillators
             for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
@@ -297,7 +380,84 @@
             
         }
 
+        function POwO_control_ModL()
+        {
+            CONTROL_index_0 = (CONTROL_index_0 + (CONTROL_param.length - 1) ) % CONTROL_param.length;
+            CONTROL_index_1 = 0;
+            POwO_control_CurrentChoicePrint();
+        }
 
+        function POwO_control_ModR()
+        {
+            CONTROL_index_0 = (CONTROL_index_0 + 1) % CONTROL_param.length;
+            CONTROL_index_1 = 0;
+            POwO_control_CurrentChoicePrint();
+        }
+
+        function POwO_control_PrmL()
+        {
+            CONTROL_index_1 = (CONTROL_index_1 + (CONTROL_param[CONTROL_index_0].length - 1)) % CONTROL_param[CONTROL_index_0].length;
+            POwO_control_CurrentChoicePrint();
+        }
+
+        function POwO_control_PrmR()
+        {
+            CONTROL_index_1 = (CONTROL_index_1 + 1) % CONTROL_param[CONTROL_index_0].length;
+            POwO_control_CurrentChoicePrint();
+        }
+
+        function POwO_control_Change(InDirection)
+        {
+            let Direction = 1;
+            if (InDirection === "+")
+            {
+                Direction = 1;
+            }
+            else if (InDirection === "-")
+            {
+                Direction = -1;
+            }
+
+            switch (CONTROL_index_0)
+            {
+                case 0: //ADSR
+                    switch (CONTROL_index_1)
+                    {
+                        case 0 : GLOBAL_adsr_atk = POwO_Math_Clamp(1/256 , GLOBAL_adsr_atk + GLOBAL_adsr_dlt * Direction , 1);                                              field_adsr_atk.textContent = GLOBAL_adsr_atk.toString();         break;
+                        case 1 : GLOBAL_adsr_sus = POwO_Math_Clamp(0, GLOBAL_adsr_sus + GLOBAL_adsr_dlt * Direction , 1);                                                   field_adsr_sus.textContent = GLOBAL_adsr_sus.toString();        break;
+                        case 2 : GLOBAL_adsr_rel = POwO_Math_Clamp(1/256 , GLOBAL_adsr_rel + GLOBAL_adsr_dlt * Direction , 1);                                              field_adsr_rel.textContent = GLOBAL_adsr_rel.toString();        break;
+                        case 3 : AudioNodes_gain.gain.setValueAtTime(POwO_Math_Clamp(0, AudioNodes_gain.gain.value + GLOBAL_vol_dlt * Direction,1), adkt.currentTime);      field_adsr_vol.textContent = AudioNodes_gain.gain.value.toString();  break;
+                        default:break;
+                    }
+                break;
+                case 1: //FILTER
+                    switch (CONTROL_index_1)
+                    {
+                        case 0 : AudioNodes_filter[1].frequency.setValueAtTime( POwO_Math_Clamp(0,AudioNodes_filter[1].frequency.value + GLOBAL_filter_delta_freq * Direction,20000), adkt.currentTime); field_filter_lowpass_freq.textContent = AudioNodes_filter[1].frequency.value.toString(); break;
+                        case 2 : AudioNodes_filter[2].frequency.setValueAtTime( POwO_Math_Clamp(0,AudioNodes_filter[2].frequency.value + GLOBAL_filter_delta_freq * Direction,20000), adkt.currentTime); field_filter_hghpass_freq.textContent = AudioNodes_filter[2].frequency.value.toString(); break;
+                        case 4 : AudioNodes_filter[3].frequency.setValueAtTime( POwO_Math_Clamp(0,AudioNodes_filter[3].frequency.value + GLOBAL_filter_delta_freq * Direction,20000), adkt.currentTime); field_filter_lowshlf_freq.textContent = AudioNodes_filter[3].frequency.value.toString(); break;
+                        case 6 : AudioNodes_filter[4].frequency.setValueAtTime( POwO_Math_Clamp(0,AudioNodes_filter[4].frequency.value + GLOBAL_filter_delta_freq * Direction,20000), adkt.currentTime); field_filter_hghshlf_freq.textContent = AudioNodes_filter[4].frequency.value.toString(); break;
+
+                        case 1 : AudioNodes_filter[1].Q     .setValueAtTime( POwO_Math_Clamp(1,AudioNodes_filter[1].Q.value + GLOBAL_filter_delta_qval * Direction,1000), adkt.currentTime); field_filter_lowpass_reso.textContent = AudioNodes_filter[1].Q.value.toString(); break;
+                        case 3 : AudioNodes_filter[2].Q     .setValueAtTime( POwO_Math_Clamp(1,AudioNodes_filter[2].Q.value + GLOBAL_filter_delta_qval * Direction,1000), adkt.currentTime); field_filter_hghpass_reso.textContent = AudioNodes_filter[2].Q.value.toString(); break;
+                        case 5 : AudioNodes_filter[3].gain  .setValueAtTime( POwO_Math_Clamp(-8,AudioNodes_filter[3].gain.value + GLOBAL_filter_delta_decb * Direction,8), adkt.currentTime); field_filter_lowshlf_gain.textContent = AudioNodes_filter[3].gain.value.toString(); break;
+                        case 7 : AudioNodes_filter[4].gain  .setValueAtTime( POwO_Math_Clamp(-8,AudioNodes_filter[4].gain.value + GLOBAL_filter_delta_decb * Direction,8), adkt.currentTime); field_filter_hghshlf_gain.textContent = AudioNodes_filter[4].gain.value.toString(); break;
+                    
+                        default:
+                            break;
+                    }
+                break;
+                default:
+                break;
+            }
+        }
+
+        function POwO_control_CurrentChoicePrint()
+        {
+            console.log(CONTROL_index_0);
+            console.log(CONTROL_index_1);
+            field_control_currentChoice.textContent = CONTROL_param[CONTROL_index_0][CONTROL_index_1];
+        }
 
 
 
@@ -328,9 +488,34 @@
             Array+Array_KeyPressDetect.push(0);
         }
 
+        const field_osc_octave  = POwO_docgetel("field_osc_octave")
+        const field_osc_edotone = POwO_docgetel("field_osc_edotone")
+        const field_osc_type    = POwO_docgetel("field_osc_type")
+        const field_osc_edo     = POwO_docgetel("field_osc_edo")
+        const field_osc_fund    = POwO_docgetel("field_osc_fund")
+        const field_osc_freqX   = POwO_docgetel("field_osc_freqX")
+        const field_osc_freqY   = POwO_docgetel("field_osc_freqY")
+
+        const field_adsr_atk = POwO_docgetel("field_adsr_atk");
+        const field_adsr_sus = POwO_docgetel("field_adsr_sus");
+        const field_adsr_rel = POwO_docgetel("field_adsr_rel");
+        const field_adsr_vol = POwO_docgetel("field_adsr_vol");
+
+        const field_filter_lowpass_freq = POwO_docgetel("field_filter_lowpass_freq");
+        const field_filter_lowpass_reso = POwO_docgetel("field_filter_lowpass_reso");
+        const field_filter_hghpass_freq = POwO_docgetel("field_filter_hghpass_freq");
+        const field_filter_hghpass_reso = POwO_docgetel("field_filter_hghpass_reso");
+        const field_filter_lowshlf_freq = POwO_docgetel("field_filter_lowshlf_freq");
+        const field_filter_lowshlf_gain = POwO_docgetel("field_filter_lowshlf_gain");
+        const field_filter_hghshlf_freq = POwO_docgetel("field_filter_hghshlf_freq");
+        const field_filter_hghshlf_gain = POwO_docgetel("field_filter_hghshlf_gain");
+
+        const field_control_currentChoice = POwO_docgetel("CONTROL_print")
+
+
         //frequency related stuffs
         var GLOBAL_edo = 12;
-        var GLOBAL_freqFund = 523.2511;
+        var GLOBAL_freqFund = 523.2511; //C5
         var GLOBAL_freq_facX = 3;
         var GLOBAL_freq_facY = 5; 
         var GLOBAL_freq = [];
@@ -344,6 +529,11 @@
 
         //main volume
         var GLOBAL_vol_dlt = 1/256;
+
+        //filter
+        var GLOBAL_filter_delta_freq = 10;
+        var GLOBAL_filter_delta_qval = 1;
+        var GLOBAL_filter_delta_decb = 1/16;
         
 
 
@@ -364,21 +554,53 @@
 
         //oscilators
         var Array_AudioNodes_osc = []
-        for(let i = 0 ; i < Array_Rectangles.length ; i++)
-        {
+        for(let i = 0 ; i < Array_Rectangles.length ; i++){
             Array_AudioNodes_osc.push(adkt.createOscillator());
         }
 
         //adsr
         var Array_AudioNodes_adsr = []
-        for(let i = 0 ; i < Array_Rectangles.length ; i++)
-        {
+        for(let i = 0 ; i < Array_Rectangles.length ; i++){
             Array_AudioNodes_adsr.push(adkt.createGain());
         }
+        
+        //filter node
+        var AudioNodes_filter =[
+            adkt.createGain(), //in
+            adkt.createBiquadFilter(), //pass low
+            adkt.createBiquadFilter(), //pass high
+            adkt.createBiquadFilter(), //shlf low
+            adkt.createBiquadFilter(), //shlf high
+            adkt.createGain() //out
+        ]
+        
 
         //main volume
         var AudioNodes_gain = adkt.createGain()
-        AudioNodes_gain.connect(adkt.destination);
+
+
+        //Settings Array
+        var CONTROL_param =
+        [
+            [
+                "ADSR > attack",
+                "ADSR > sustain",
+                "ADSR > release",
+                "ADSR > overall"
+            ],
+            [
+                "FILTER > lowpass > frequency",
+                "FILTER > lowpass > resonance",
+                "FILTER > highpass > frequency",
+                "FILTER > highpass > resonance",
+                "FILTER > lowshelf > frequency",
+                "FILTER > lowshelf > gain",
+                "FILTER > highshelf > frequency",
+                "FILTER > highshelf > gain"
+            ]
+        ]
+        let CONTROL_index_0 = 0;
+        let CONTROL_index_1 = 3;
 
         //---- ---- ---- ---- runtime flow
 
@@ -387,32 +609,27 @@
 
         document.addEventListener("keydown", (event) =>
         {
-            // for(let i = 0 ; i < recAll.length ; i++)
-            // {
-            //     POwO_ifKeyDownSetFlex(event, chaAll[i], recAll[i]);
-            // }
-
             console.log("got Keypress : " + event.key)
 
             POwO_musicButtonDown(event);
 
             if (event.key === "="){POwO_adktSetup()}
-            else if (event.key === "Z"){POwO_musicAllNotesMigrate(0.5)}
-            else if (event.key === "X"){POwO_musicAllNotesMigrate(2)}
-            else if (event.key === "C"){POwO_musicAllNotesMigrate(1/(2**(1/GLOBAL_edo)))}
-            else if (event.key === "V"){POwO_musicAllNotesMigrate((2**(1/GLOBAL_edo)))}
-            //else if (event.key === "b"){POwO_Action_ModL()}
-            //else if (event.key === "n"){POwO_Action_PrmL()}
-            //else if (event.key === "m"){POwO_Param_Change("-")}
-            //else if (event.key === ","){POwO_Param_Change("+")}
-            //else if (event.key === "."){POwO_Action_PrmR()}
-            //else if (event.key === "/"){POwO_Action_ModR() }
+            else if (event.key === "Z"){POwO_musicAllNotesMigrate(0.5); field_osc_octave.textContent = Number(field_osc_octave.textContent)-1 }
+            else if (event.key === "X"){POwO_musicAllNotesMigrate(2); field_osc_octave.textContent = Number(field_osc_octave.textContent)+1 }
+            else if (event.key === "C"){POwO_musicAllNotesMigrate(1/(2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)-1}
+            else if (event.key === "V"){POwO_musicAllNotesMigrate((2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)+1}
+            else if (event.key === "B"){POwO_control_ModL()}
+            else if (event.key === "N"){POwO_control_PrmL()}
+            else if (event.key === "M"){POwO_control_Change("-")}
+            else if (event.key === "<"){POwO_control_Change("+")}
+            else if (event.key === ">"){POwO_control_PrmR()}
+            else if (event.key === "?"){POwO_control_ModR()}
             //else if (event.key === "9"){}
             //else if (event.key === "0"){POwO_Action_KeyTextToggle()}
-            //else if (event.key === "1"){POwO_Action_TypeSin()}
-            //else if (event.key === "2"){POwO_Action_TypeTri()}
-            //else if (event.key === "3"){POwO_Action_TypeSaw()}
-            //else if (event.key === "4"){POwO_Action_TypeSqr()}
+            else if (event.key === "!"){POwO_setOscType("sine")}
+            else if (event.key === "@"){POwO_setOscType("triangle")}
+            else if (event.key === "#"){POwO_setOscType("sawtooth")}
+            else if (event.key === "$"){POwO_setOscType("square")}
         });
 
         document.addEventListener("keyup", (event) =>
