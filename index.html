@@ -181,25 +181,18 @@
             return (B-A) * t + A
         }
 
-        function POwO_setOscFreq
-        (
-            InArrayFreq , InLayout , InFreqFund ,
-            InEdo ,
-            InFreqX , InFreqY,
-            InExplicitList,
-            InArrayOsc
-        )
+        function POwO_setOscFreq(InExplicitList)
         {
-            InArrayFreq = [];
+            GLOBAL_freq = [];
 
-            if (InLayout === "1D")
+            if (GLOBAL_layout === "1D")
             {
                 for(let i = 0 ; i < Array_Rectangles.length ; i++)
                 {
-                    InArrayFreq.push(InFreqFund * (2 ** (i/InEdo)))
+                    GLOBAL_freq.push(GLOBAL_freqFund * (2 ** (i/GLOBAL_edo)))
                 }
             }
-            else if (InLayout === "2D")
+            else if (GLOBAL_layout === "2D")
             {
                 for(let i = 0 ; i < 4 ; i++)
                 {
@@ -207,23 +200,22 @@
                     {
                         //i = 0 : box * (freqX ^ -1)
                         //j = 0 : box * (freY ^ -3)
-                        InArrayFreq.push( InFreqFund * ( InFreqY ** (i-1) ) * ( InFreqX ** (j-3)) )
+                        GLOBAL_freq.push( GLOBAL_freqFund * ( GLOBAL_freq_facY ** (i-1) ) * ( GLOBAL_freq_facX ** (j-3)) )
                     }
                 }
             }
-            else if (InLayout === "explicit")
+            else if (GLOBAL_layout === "explicit")
             {
-                if (InExplicitList.length === InArrayOsc.length)
+                if (InExplicitList.length === Array_AudioNodes_osc.length)
                 {
-                    InArrayFreq = InExplicitList
+                    GLOBAL_freq = InExplicitList
                 }
             }
 
-            for(let i = 0 ; i < InArrayOsc.length ; i++)
+            for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
             {
-                InArrayOsc[i].frequency.setValueAtTime(InArrayFreq[i],adkt.currentTime)
+                Array_AudioNodes_osc[i].frequency.setValueAtTime(GLOBAL_freq[i],adkt.currentTime)
             }
-
         }
 
         function POwO_setOscType(Instring)
@@ -291,9 +283,18 @@
             }
         }
 
-        function POwO_musicOctaveUp()
+        function POwO_musicAllNotesMigrate( InFactor )
         {
-           
+            console.log("Migrate : " + InFactor.toString())
+            console.log(GLOBAL_freq)
+            for(let i = 0 ; i < GLOBAL_freq.length ; i++)
+            {
+                GLOBAL_freq[i] = GLOBAL_freq[i] * InFactor;
+                Array_AudioNodes_osc[i].frequency.setValueAtTime(GLOBAL_freq[i],adkt.currentTime);
+                console.log("New Freq : " + Array_AudioNodes_osc[i].frequency)
+            }
+
+            
         }
 
 
@@ -391,13 +392,15 @@
             //     POwO_ifKeyDownSetFlex(event, chaAll[i], recAll[i]);
             // }
 
+            console.log("got Keypress : " + event.key)
+
             POwO_musicButtonDown(event);
 
             if (event.key === "="){POwO_adktSetup()}
-            //else if (event.key === "c"){POwO_Action_SemiDown()}
-            //else if (event.key === "v"){POwO_Action_SemiUp()}
-            //else if (event.key === "z"){POwO_Action_OctaveDown()}
-            //else if (event.key === "x"){POwO_Action_OctaveUp()}
+            else if (event.key === "Z"){POwO_musicAllNotesMigrate(0.5)}
+            else if (event.key === "X"){POwO_musicAllNotesMigrate(2)}
+            else if (event.key === "C"){POwO_musicAllNotesMigrate(1/(2**(1/GLOBAL_edo)))}
+            else if (event.key === "V"){POwO_musicAllNotesMigrate((2**(1/GLOBAL_edo)))}
             //else if (event.key === "b"){POwO_Action_ModL()}
             //else if (event.key === "n"){POwO_Action_PrmL()}
             //else if (event.key === "m"){POwO_Param_Change("-")}
