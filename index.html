@@ -119,32 +119,38 @@
     <div class="centerContainer">
         <div class="centerRow" style="display:flex;color:#666;font-size:12px;width:1920px;">
             <span style="text-align: center;">
-                ver 2025.0406.0021 <br>
-                OSC = &nbsp&nbsp
+                ver 2025.0710.1642 <br>
+                <b>OSC_General &nbsp&nbsp = &nbsp&nbsp</b>
                 [oct : <text id="field_osc_octave">5</text>]&nbsp&nbsp
                 [edotone : <text id="field_osc_edotone">0</text>]&nbsp&nbsp
                 [type : <text id="field_osc_type">square</text>]&nbsp&nbsp
-
                 [layout : 
                 <select id="field_osc_layout">
                     <option value="1D">1D</option>
                     <option value="2D">2D</option>
                     <option value="explicit">Explicit</option>
-                </select>]&nbsp&nbsp
+                </select>]<br>
+
+                <b>Layout_1D&2D &nbsp&nbsp = &nbsp&nbsp</b>
                 [edo : <input type="number" id="field_osc_edo" min="1" step="1" placeholder="notes per octave" value="12">]&nbsp&nbsp
                 [fund : <input type="number" id="field_osc_fund" min="0.00390625" step="0.00390625" placeholder="fundamental freq" value="523.2511">]&nbsp&nbsp
                 [freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="1.5">]&nbsp&nbsp
+                [OctClampX : <input type="checkbox" id="field_osc_octClampX" style="margin: 0px;padding: 0px;">]&nbsp&nbsp
                 [freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="1.25">]&nbsp&nbsp
+                [OctClampY : <input type="checkbox" id="field_osc_octClampY" style="margin: 0px;padding: 0px">]&nbsp&nbsp
+                [OctClampXY : <input type="checkbox" id="field_osc_octClampXY" style="margin: 0px;padding: 0px">]<br>
+
+                <b>Layout_Explicit = &nbsp&nbsp</b>
                 [freqList : <input type="text" id="field_osc_freqL" value="523.2511,587.3295,659.2551,698.4565,783.9909,880,987.7666,1046.5022,0,554.3653,622.254,0,739.9888,830.6094,932.3275,0,1046.5022,1174.659,1318.5102,1396.913,1567.9818,1760,1975.5332,2093.0044,0,1108.7306,1244.508,0,1479.9776,1661.2188,1864.655,0" style="width:200px"> ]
                 <br>
 
-                ADSR = &nbsp&nbsp
+                <b>Module_ADSR &nbsp&nbsp = &nbsp&nbsp</b>
                 [atk : <text id="field_adsr_atk">1</text>]&nbsp&nbsp
                 [sus : <text id="field_adsr_sus">1</text>]&nbsp&nbsp
                 [rel : <text id="field_adsr_rel">1</text>]&nbsp&nbsp
                 [vol : <text id="field_adsr_vol">0.125</text>]<br>
                 
-                FILTER = &nbsp&nbsp
+                <b>Module_FILTER &nbsp&nbsp = &nbsp&nbsp</b>
                 [lowpass > freq : <text id="field_filter_lowpass_freq">20000</text>]&nbsp&nbsp
                 [lowpass > reso : <text id="field_filter_lowpass_reso">1</text>]&nbsp&nbsp
                 [hghpass > freq : <text id="field_filter_hghpass_freq">0</text>]&nbsp&nbsp
@@ -228,8 +234,8 @@
             <span style="text-align: center;">
                 <br>
                 [! : ◯]&nbsp&nbsp&nbsp[@ : △]&nbsp&nbsp&nbsp[# : ◺]&nbsp&nbsp&nbsp[$ : ▢]&nbsp&nbsp&nbsp[0 : Toggle KeyText]&nbsp&nbsp&nbsp<text id="field_adktSetup" style="color:#600000;">[= : start / power / setup (MANDATORY)]</text><br>
-                [z : oct ↓] &nbsp&nbsp&nbsp [x : oct ↑] &nbsp&nbsp&nbsp [c : trans ↓] &nbsp&nbsp&nbsp [v : trans ↑]  &nbsp&nbsp&nbsp 
-                [b : module ←] &nbsp&nbsp&nbsp [n : param ←] &nbsp&nbsp&nbsp [m : param ↓] &nbsp&nbsp&nbsp [, : param ↑] &nbsp&nbsp&nbsp [. : param →] &nbsp&nbsp&nbsp [/ : module →] &nbsp&nbsp&nbsp [- : configure layout]<br>
+                [Z : oct ↓] &nbsp&nbsp&nbsp [X : oct ↑] &nbsp&nbsp&nbsp [C : trans ↓] &nbsp&nbsp&nbsp [V : trans ↑]  &nbsp&nbsp&nbsp 
+                [B : module ←] &nbsp&nbsp&nbsp [N : param ←] &nbsp&nbsp&nbsp [M : param ↓] &nbsp&nbsp&nbsp [&lt : param ↑] &nbsp&nbsp&nbsp [&gt : param →] &nbsp&nbsp&nbsp [? : module →] &nbsp&nbsp&nbsp [- : configure layout]<br>
                 
             </span>
         </div>
@@ -249,11 +255,13 @@
 
         //---- ---- ---- ---- function declare
 
+        //getElementbyID but shorter
         function POwO_docgetel(InString)
         {
             return document.getElementById(InString);
         }
 
+        //math clamping
         function POwO_Math_Clamp(InMin, InVal, InMax)
         {
             
@@ -273,11 +281,13 @@
 
         }
 
+        //math lerping
         function POwO_Math_LERP(A, B, t)
         {
             return (B-A) * t + A
         }
 
+        //configure the frequency for all notes
         function POwO_setOscFreq()
         {
             GLOBAL_freq = [];
@@ -286,7 +296,12 @@
             GLOBAL_edo = field_osc_edo.value;
             GLOBAL_freq_facX = field_osc_freqX.value;
             GLOBAL_freq_facY = field_osc_freqY.value;
+            GLOBAL_freq_octClampX = field_osc_octClampX.checked;
+            GLOBAL_freq_octClampY = field_osc_octClampY.checked;
+            GLOBAL_freq_octClampXY = field_osc_octClampXY.checked;
+            
 
+            //append new frequencies
             if (GLOBAL_layout === "1D")
             {
                 for(let i = 0 ; i < Array_Rectangles.length ; i++)
@@ -302,7 +317,57 @@
                     {
                         //i = 0 : box * (freqX ^ -1)
                         //j = 0 : box * (freY ^ -3)
-                        GLOBAL_freq.push( GLOBAL_freqFund * ( GLOBAL_freq_facY ** (i-1) ) * ( GLOBAL_freq_facX ** (j-3)) )
+                        let newFactorX = GLOBAL_freq_facX ** (j-3);
+                        let newFactorY = GLOBAL_freq_facY ** (i-1);
+
+                        if (GLOBAL_freq_octClampX)
+                        {
+                            while( (newFactorX !== 0 && newFactorX < 1) || 2 <= newFactorX )
+                            {
+                                if (newFactorX < 1)
+                                {
+                                    newFactorX = newFactorX * 2;
+                                }
+                                else if (2 <= newFactorX)
+                                {
+                                    newFactorX = newFactorX / 2;
+                                }
+                            }
+                        }
+
+                       if (GLOBAL_freq_octClampY)
+                        {
+                            while( (newFactorY !== 0 && newFactorY < 1) || 2 <= newFactorY )
+                            {
+                                if (newFactorY < 1)
+                                {
+                                    newFactorY = newFactorY * 2;
+                                }
+                                else if (2 <= newFactorY)
+                                {
+                                    newFactorY = newFactorY / 2;
+                                }
+                            }
+                        }
+
+                        let newFactorXY = newFactorX * newFactorY
+
+                        if (GLOBAL_freq_octClampXY)
+                        {
+                            while( (newFactorXY !== 0 && newFactorXY < 1) || 2 <= newFactorXY )
+                            {
+                                if (newFactorXY < 1)
+                                {
+                                    newFactorXY = newFactorXY * 2;
+                                }
+                                else if (2 <= newFactorXY)
+                                {
+                                    newFactorXY = newFactorXY / 2;
+                                }
+                            }
+                        }
+
+                        GLOBAL_freq.push( GLOBAL_freqFund * newFactorXY)
                     }
                 }
             }
@@ -325,12 +390,19 @@
                 }
             }
 
+            //remove any previous frequencies
             for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
             {
                 Array_AudioNodes_osc[i].frequency.setValueAtTime(GLOBAL_freq[i],adkt.currentTime)
             }
+
+            for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
+            {
+                console.log((Array_AudioNodes_osc[i].frequency.value))
+            }
         }
 
+        //configure the wave type for all notes
         function POwO_setOscType(Instring)
         {
             for(let i = 0 ; i < Array_AudioNodes_osc.length ; i++)
@@ -341,6 +413,7 @@
             field_osc_type.textContent = Instring;
         }
 
+        //power on
         async function POwO_adktSetup()
         {
             //start the adkt
@@ -392,6 +465,7 @@
 
         }
 
+        //piano keypress
         function POwO_musicButtonDown(InString)
         {
             for(let i = 0 ; i < Array_KeyPressString.length ; i++)
@@ -403,6 +477,7 @@
             }
         }
 
+        //piano keyrelease
         function POwO_musicButtonUp(InString)
         {
             for(let i = 0 ; i < Array_KeyPressString.length ; i++)
@@ -414,6 +489,7 @@
             }
         }
 
+        //multiply all notes by a given factor
         function POwO_musicAllNotesMigrate( InFactor )
         {
             console.log("Migrate : " + InFactor.toString())
@@ -563,6 +639,9 @@
         const field_osc_fund    = POwO_docgetel("field_osc_fund")
         const field_osc_freqX   = POwO_docgetel("field_osc_freqX")
         const field_osc_freqY   = POwO_docgetel("field_osc_freqY")
+        const field_osc_octClampX = POwO_docgetel("field_osc_octClampX")
+        const field_osc_octClampY = POwO_docgetel("field_osc_octClampY")
+        const field_osc_octClampXY = POwO_docgetel("field_osc_octClampXY")
         const field_osc_freqL   = POwO_docgetel("field_osc_freqL")
 
         const field_adsr_atk = POwO_docgetel("field_adsr_atk");
@@ -586,10 +665,14 @@
         //frequency related stuffs
         var GLOBAL_edo = 12;
         var GLOBAL_freqFund = 523.2511; //C5
+        var GLOBAL_layout = "1D" //can be 1D or 2D
         var GLOBAL_freq_facX = 3;
         var GLOBAL_freq_facY = 5; 
+        var GLOBAL_freq_octClampX = false;
+        var GLOBAL_freq_octClampY = false;
+        var GLOBAL_freq_octClampXY = false;
         var GLOBAL_freq = [];
-        var GLOBAL_layout = "1D" //can be 1D or 2D
+        
 
         //adsr related stuffs
         var GLOBAL_adsr_atk = 1;
