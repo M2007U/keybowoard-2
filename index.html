@@ -27,8 +27,8 @@
 
         .rectangle
         {
-            width: 70px;
-            height: 70px;
+            width: 100px;
+            height: 100px;
             background-color: rgba(255,204,0,0.1);
 
             margin: 5px;
@@ -42,14 +42,14 @@
             display: flex;
 
             color:white;
-            font-size: 16px;
+            font-size: 32px;
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         }
 
         .button
         {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background-color: rgba(255,204,0,0.1);
 
             text-align: center;
@@ -119,7 +119,7 @@
     <div class="centerContainer">
         <div class="centerRow" style="display:flex;color:#666;font-size:12px;width:1920px;">
             <span style="text-align: center;">
-                ver 2025.0710.1642 <br>
+                ver 2025.0711.1642 <br>
                 <b>OSC_General &nbsp&nbsp = &nbsp&nbsp</b>
                 [oct : <text id="field_osc_octave">5</text>]&nbsp&nbsp
                 [edotone : <text id="field_osc_edotone">0</text>]&nbsp&nbsp
@@ -165,14 +165,14 @@
                 <br>
             </span>
         </div>
-        <div style="height:80px"></div>
+        <div style="height:60px"></div>
 
         <div class="centerRow">
             <div id="btn_wave_sin" class="button">◯</div>
             <div id="btn_wave_tri" class="button">△</div>
             <div id="btn_wave_saw" class="button">◺</div>
             <div id="btn_wave_sqr" class="button">▢</div>
-            <div style="width: 600px;"></div>
+            <div style="width: 520px;"></div>
             <div id="btn_freqconfig" class="button">-</div>
             <div id="btn_adktSetup" class="button">=</div>
         </div>
@@ -221,7 +221,7 @@
             <div id="btn_oct_u" class="button">oct ↑</div>
             <div id="btn_smi_d" class="button">semi ↓</div>
             <div id="btn_smi_u" class="button">semi ↑</div>
-            <div style="width: 400px;"></div>
+            <div style="width: 280px;"></div>
             <div id="btn_mod_l" class="button">mod ←</div>
             <div id="btn_prm_l" class="button">prm ←</div>
             <div id="btn_prm_d" class="button">prm ↓</div>
@@ -229,7 +229,7 @@
             <div id="btn_prm_r" class="button">prm →</div>
             <div id="btn_mod_r" class="button">mod →</div>
         </div>
-        <div style="height:80px"></div>
+        <div style="height:60px"></div>
         <div class="centerRow" style="display:flex;color:#606060;font-size:12px;width:1920px;">
             <span style="text-align: center;">
                 <br>
@@ -583,6 +583,25 @@
             field_control_currentChoice.textContent = CONTROL_param[CONTROL_index_0][CONTROL_index_1];
         }
 
+        function POwO_interface_ToggleText()
+        {
+            if (Array_Rectangles[0].textContent === "z")
+            {
+                for (let i = 0 ; i < Array_Rectangles.length ; i++)
+                {
+                    Array_Rectangles[i].textContent = ""
+                }
+            }
+            else
+            {
+                for (let i = 0 ; i < Array_Rectangles.length ; i++)
+                {
+                    Array_Rectangles[i].textContent = Array_KeyPressString[i]
+                }
+                Array_Rectangles[11].textContent = "[f]"
+            }
+        }
+
 
 
 
@@ -782,6 +801,7 @@
             else if (InString === "<"){POwO_control_Change("+")}
             else if (InString === ">"){POwO_control_PrmR()}
             else if (InString === "?"){POwO_control_ModR()}
+            else if (InString === "0"){POwO_interface_ToggleText()}
             
             
         }
