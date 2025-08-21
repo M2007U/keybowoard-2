@@ -27,8 +27,8 @@
 
         .rectangle
         {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background-color: rgba(255,204,0,0.1);
 
             margin: 5px;
@@ -42,7 +42,7 @@
             display: flex;
 
             color:white;
-            font-size: 32px;
+            font-size: 20px;
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         }
 
@@ -91,6 +91,21 @@
             margin: 10px;
         }
 
+        .settingsBox
+        {
+            height:210px;
+            
+            
+            border-radius: 16px;
+            padding: 16px;
+            margin:8px;
+            
+            font-size: 16px;
+            text-align: left;
+
+            background-color: rgba(192,192,192,0.1);
+        }
+
         input {
             padding: 4px;
             font-size: 12px;
@@ -113,60 +128,75 @@
 
     </style>
 </head>
-<body  style="font-family:Calibri, Consolas, 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;">
-
-
+<body  style="font-family:Calibri, Consolas, 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;background: #000;">
     <div class="centerContainer">
-        <div class="centerRow" style="display:flex;color:#666;font-size:12px;width:1920px;">
+        <div class="centerRow" style="display:flex;color:#666;font-size:16px;width:1920px;">
             <span style="text-align: center;">
-                ver 2025.0711.1642 <br>
-                <b>OSC_General &nbsp&nbsp = &nbsp&nbsp</b>
-                [oct : <text id="field_osc_octave">5</text>]&nbsp&nbsp
-                [edotone : <text id="field_osc_edotone">0</text>]&nbsp&nbsp
-                [type : <text id="field_osc_type">square</text>]&nbsp&nbsp
-                [layout : 
-                <select id="field_osc_layout">
-                    <option value="1D">1D</option>
-                    <option value="2D">2D</option>
-                    <option value="explicit">Explicit</option>
-                </select>]&nbsp&nbsp
-                [freqList Index :<text id="field_osc_freqIndex">0</text>]<br>
-
-                <b>Layout_1D&2D &nbsp&nbsp = &nbsp&nbsp</b>
-                [edo : <input type="number" id="field_osc_edo" min="1" step="1" placeholder="notes per octave" value="12">]&nbsp&nbsp
-                [fund : <input type="number" id="field_osc_fund" min="0.00390625" step="0.00390625" placeholder="fundamental freq" value="523.2511">]&nbsp&nbsp
-                [freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="1.5">]&nbsp&nbsp
-                [OctClampX : <input type="checkbox" id="field_osc_octClampX" style="margin: 0px;padding: 0px;">]&nbsp&nbsp
-                [freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="1.25">]&nbsp&nbsp
-                [OctClampY : <input type="checkbox" id="field_osc_octClampY" style="margin: 0px;padding: 0px">]&nbsp&nbsp
-                [OctClampXY : <input type="checkbox" id="field_osc_octClampXY" style="margin: 0px;padding: 0px">]<br>
-
-                <b>Layout_Explicit = &nbsp&nbsp</b>
-                [freqList : <input type="text" id="field_osc_freqL" value="523.2511,587.3295,659.2551,698.4565,783.9909,880,987.7666,1046.5022,0,554.3653,622.254,0,739.9888,830.6094,932.3275,0,1046.5022,1174.659,1318.5102,1396.913,1567.9818,1760,1975.5332,2093.0044,0,1108.7306,1244.508,0,1479.9776,1661.2188,1864.655,0" style="width:200px"> ]
-                <br>
-
-                <b>Module_ADSR &nbsp&nbsp = &nbsp&nbsp</b>
-                [atk : <text id="field_adsr_atk">1</text>]&nbsp&nbsp
-                [sus : <text id="field_adsr_sus">1</text>]&nbsp&nbsp
-                [rel : <text id="field_adsr_rel">1</text>]&nbsp&nbsp
-                [vol : <text id="field_adsr_vol">0.125</text>]<br>
+                ver 2025.0821.1936 <br><br>
                 
-                <b>Module_FILTER &nbsp&nbsp = &nbsp&nbsp</b>
-                [lowpass > freq : <text id="field_filter_lowpass_freq">20000</text>]&nbsp&nbsp
-                [lowpass > reso : <text id="field_filter_lowpass_reso">1</text>]&nbsp&nbsp
-                [hghpass > freq : <text id="field_filter_hghpass_freq">0</text>]&nbsp&nbsp
-                [hghpass > reso : <text id="field_filter_hghpass_reso">1</text>]&nbsp&nbsp
-                [lowshlf > freq : <text id="field_filter_lowshlf_freq">0</text>]&nbsp&nbsp
-                [lowshlf > gain : <text id="field_filter_lowshlf_gain">0</text>]&nbsp&nbsp
-                [hghshlf > freq : <text id="field_filter_hghshlf_freq">20000</text>]&nbsp&nbsp
-                [hghshlf > gain : <text id="field_filter_hghshlf_gain">0</text>]<br>
-                <br>
-                <text style="color:#403000;">[Currently Adjusting : <text  id="CONTROL_print">ASDR > overall</text>]</text>
+                
+                <div class="centerRow">
+                    <div class="settingsBox">
+                        <b style="font-size: 20px;">OSC_General</b><br><br>
+                        [oct : <text id="field_osc_octave">5</text>]<br>
+                        [edotone : <text id="field_osc_edotone">0</text>]<br>
+                        [type : <text id="field_osc_type">square</text>]<br>
+                        [layout : 
+                        <select id="field_osc_layout">
+                            <option value="1D">1D</option>
+                            <option value="2D">2D</option>
+                            <option value="explicit">Explicit</option>
+                        </select>]<br>
+                        [freqList Index : <text id="field_osc_freqIndex">0</text>]
+                    </div>
+                    <div class="settingsBox">
+                        <b style="font-size: 20px;">Layout_1D&2D</b><br><br>
+                        [edo : <input type="number" id="field_osc_edo" min="1" step="1" placeholder="notes per octave" value="12">]<br>
+                        [fund : <input type="number" id="field_osc_fund" min="0.00390625" step="0.00390625" placeholder="fundamental freq" value="523.2511" style="width:80px">]<br>
+                        [freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="1.5">]<br>
+                        [OctClampX : <input type="checkbox" id="field_osc_octClampX" style="margin: -15px;padding: 0px;">]<br>
+                        [freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="1.25">]<br>
+                        [OctClampY : <input type="checkbox" id="field_osc_octClampY" style="margin: -15px;padding: 0px">]<br>
+                        [OctClampXY : <input type="checkbox" id="field_osc_octClampXY" style="margin: -15px;padding: 0px">]
+                    </div>
+                    <div class="settingsBox">
+                        <b style="font-size: 20px;">Layout_Explicit</b><br><br>
+                        [freqList : <br><textarea type="text" id="field_osc_freqL" style="width:150px;height:130px;background-color: transparent;color:#666;">
+                            523.2511,587.3295,659.2551,698.4565,783.9909,880,987.7666,1046.5022,0,554.3653,622.254,0,739.9888,830.6094,932.3275,0,1046.5022,1174.659,1318.5102,1396.913,1567.9818,1760,1975.5332,2093.0044,0,1108.7306,1244.508,0,1479.9776,1661.2188,1864.655,0
+                        </textarea>  ]
+                    </div>
+                    <div class="settingsBox">
+                        <b style="font-size: 20px;">ADSR</b><br><br>
+                        [atk : <text id="field_adsr_atk">1</text>]<br>
+                        [sus : <text id="field_adsr_sus">1</text>]<br>
+                        [rel : <text id="field_adsr_rel">1</text>]<br>
+                        [vol : <text id="field_adsr_vol">0.125</text>]
+                    </div>
+                    <div class="settingsBox">
+                        <b style="font-size: 20px;">FILTER</b><br><br>
+                        [lowpass > freq : <text id="field_filter_lowpass_freq">20000</text>]<br>
+                        [lowpass > reso : <text id="field_filter_lowpass_reso">1</text>]<br>
+                        [hghpass > freq : <text id="field_filter_hghpass_freq">0</text>]<br>
+                        [hghpass > reso : <text id="field_filter_hghpass_reso">1</text>]<br>
+                        [lowshlf > freq : <text id="field_filter_lowshlf_freq">0</text>]<br>
+                        [lowshlf > gain : <text id="field_filter_lowshlf_gain">0</text>]<br>
+                        [hghshlf > freq : <text id="field_filter_hghshlf_freq">20000</text>]<br>
+                        [hghshlf > gain : <text id="field_filter_hghshlf_gain">0</text>]
+                    </div>
 
+                </div>
+                <br>
+                <text style="color:#403000;font-size:16px">[Currently Adjusting : <text  id="CONTROL_print">ASDR > overall</text>]</text>
                 <br>
             </span>
         </div>
         <div style="height:60px"></div>
+
+        <div class="centerRow">
+            <canvas id="kanvas" width="460" height="460"></canvas>
+        </div>
+        
+
 
         <div class="centerRow">
             <div id="btn_wave_sin" class="button">◯</div>
@@ -231,26 +261,18 @@
             <div id="btn_mod_r" class="button">mod →</div>
         </div>
         <div style="height:60px"></div>
-        <div class="centerRow" style="display:flex;color:#606060;font-size:12px;width:1920px;">
+        <div class="centerRow" style="display:flex;color:#606060;font-size:16px;width:1920px;">
             <span style="text-align: center;">
                 <br>
                 [! : ◯]&nbsp&nbsp&nbsp[@ : △]&nbsp&nbsp&nbsp[# : ◺]&nbsp&nbsp&nbsp[$ : ▢]&nbsp&nbsp&nbsp[0 : Toggle KeyText]&nbsp&nbsp&nbsp<text id="field_adktSetup" style="color:#600000;">[= : start / power / setup (MANDATORY)]</text><br>
-                [Z : oct ↓] &nbsp&nbsp&nbsp [X : oct ↑] &nbsp&nbsp&nbsp [C : trans ↓] &nbsp&nbsp&nbsp [V : trans ↑]  &nbsp&nbsp&nbsp 
+                [Z : oct ↓] &nbsp&nbsp&nbsp [X : oct ↑] &nbsp&nbsp&nbsp [C : trans ↓] &nbsp&nbsp&nbsp [V : trans ↑]<br>
                 [B : module ←] &nbsp&nbsp&nbsp [N : param ←] &nbsp&nbsp&nbsp [M : param ↓] &nbsp&nbsp&nbsp [&lt : param ↑] &nbsp&nbsp&nbsp [&gt : param →] &nbsp&nbsp&nbsp [? : module →] &nbsp&nbsp&nbsp [- : configure layout]<br>
+                [o, p, '[', ']' : freqList Index 0~3]
                 
             </span>
         </div>
         
     </div>
-
-
-
-
-
-
-
-
-
 
     <script>
 
@@ -286,6 +308,30 @@
         function POwO_Math_LERP(A, B, t)
         {
             return (B-A) * t + A
+        }
+
+        //math lerping rev
+        function POwO_Math_LERPinv(A,B,V)
+        {
+            let ReturnResult = 0;
+
+            if (A==B)
+            {
+                ReturnResult = A;
+            }
+            else
+            {
+                ReturnResult = (V-A) / (B-A) 
+            }
+            
+            return ReturnResult;
+        }
+
+        //math lerp Mapping
+        function POwO_Math_LERPmap(a,b,v,A,B)
+        {
+            let t = POwO_Math_LERPinv(a,b,v);
+            return POwO_Math_LERP(A,B,t);
         }
 
         //configure the frequency for all notes
@@ -604,6 +650,8 @@
                     Array_KeyPressDetect[i] = 1;
                 }
             }
+
+            POwO_canvas_draw(POwO_canvas_collect())
         }
 
         //piano keyrelease
@@ -616,6 +664,8 @@
                     Array_KeyPressDetect[i] = 0;
                 }
             }
+
+            POwO_canvas_draw(POwO_canvas_collect())
         }
 
         //multiply all notes by a given factor
@@ -731,6 +781,67 @@
             }
         }
 
+        //take degress as arguments, like in trigonometry
+        function POwO_canvas_draw(InArray)
+        {
+            //setup
+            let Kanvas = POwO_docgetel("kanvas");
+            let KanvasContext = Kanvas.getContext("2d");
+            KanvasContext.clearRect(0, 0, Kanvas.width, Kanvas.height)
+            let cx = Kanvas.width / 2;
+            let cy = Kanvas.height / 2;
+            let RadiusBig = 0;
+            let RadiusSmol = 0;
+
+            //draw ring
+            RadiusBig = 200;
+            KanvasContext.lineWidth = 1;        // ring thickness
+            KanvasContext.strokeStyle = "rgba(255,192,0,0.5)"  // ring color
+            KanvasContext.beginPath();
+            KanvasContext.arc(cx, cy, RadiusBig, 0, Math.PI * 2);
+            KanvasContext.stroke();
+
+            //draw smaller circles
+            RadiusSmol = 25;
+            KanvasContext.fillStyle = "rgba(255,192,0,1)"
+            for(let i = 0 ; i < InArray.length ; i++)
+            {
+                let DegInRad = InArray[i] / 180 * Math.PI;
+                KanvasContext.beginPath();
+                KanvasContext.arc(cx + Math.cos(DegInRad) * RadiusBig, cy - Math.sin(DegInRad) * RadiusBig, RadiusSmol, 0, Math.PI * 2);
+                KanvasContext.stroke();  
+                KanvasContext.fill()
+            }
+        }
+
+        function POwO_canvas_collect()
+        {
+            let OutArray = [];
+
+            for(let i = 0 ; i < Array_KeyPressDetect.length ; i++)
+            {
+                //if it is pressed, got freq will be multiplied by 1, else 0
+                let FreqGot = Array_KeyPressDetect[i] * Array_AudioNodes_osc[i].frequency.value
+
+                //what is the factor of it compared to the fund freq
+                let FactorGot = FreqGot / GLOBAL_freqFund
+
+                //log it
+                let Logarithm = Math.log2(FactorGot)
+
+                //get the fraction
+                let LERPt = Logarithm % 1;
+
+                //turn it into Degrees
+                //here we use lerp mapping
+                let DegRes = POwO_Math_LERPmap(0,1,LERPt,0,360)
+                OutArray.push(DegRes)
+            }
+
+            return OutArray;
+        }
+
+
 
 
 
@@ -757,6 +868,7 @@
         var Array_KeyPressDetect = []; //we use this to detect if a key is pressed or released, (released is 0, pressed is 1)
         for(let i = 0 ; i < Array_KeyPressString.length ; i ++)
         {
+            //for now, fill it up with 32 '0's
             Array+Array_KeyPressDetect.push(0);
         }
 
