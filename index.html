@@ -814,6 +814,7 @@
             }
         }
 
+        //collect the pressed frequencies, turn them into angles, and return them as an array
         function POwO_canvas_collect()
         {
             let OutArray = [];
@@ -1071,6 +1072,8 @@
         {
             console.log("got Keypress : " + event.key)
             POwO_InterfaceControl_Down(event.key)
+
+            if (event.key === "/"){event.preventDefault()}
         });
 
         document.addEventListener("keyup", (event) =>
