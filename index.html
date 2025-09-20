@@ -93,7 +93,7 @@
 
         .settingsBox
         {
-            height:210px;
+            height:250px;
             
             
             border-radius: 16px;
@@ -132,7 +132,7 @@
     <div class="centerContainer">
         <div class="centerRow" style="display:flex;color:#666;font-size:16px;width:1920px;">
             <span style="text-align: center;">
-                ver 2025.0821.1936 <br><br>
+                ver 2025.0920.1634 <br><br>
                 
                 
                 <div class="centerRow">
@@ -144,7 +144,8 @@
                         [layout : 
                         <select id="field_osc_layout">
                             <option value="1D">1D</option>
-                            <option value="2D">2D</option>
+                            <option value="2Dfrq">2D - freq</option>
+                            <option value="2Dedo">2D - edo</option>
                             <option value="explicit">Explicit</option>
                         </select>]<br>
                         [freqList Index : <text id="field_osc_freqIndex">0</text>]
@@ -153,9 +154,14 @@
                         <b style="font-size: 20px;">Layout_1D&2D</b><br><br>
                         [edo : <input type="number" id="field_osc_edo" min="1" step="1" placeholder="notes per octave" value="12">]<br>
                         [fund : <input type="number" id="field_osc_fund" min="0.00390625" step="0.00390625" placeholder="fundamental freq" value="523.2511" style="width:80px">]<br>
+                        
                         [freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="1.5">]<br>
-                        [OctClampX : <input type="checkbox" id="field_osc_octClampX" style="margin: -15px;padding: 0px;">]<br>
                         [freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="1.25">]<br>
+
+                        [edoX : <input type="number" id="field_osc_edoX" step="1" placeholder="edo factor X" value="4">]<br>
+                        [edoY : <input type="number" id="field_osc_edoY" step="1" placeholder="edo factor Y" value="1">]<br>
+
+                        [OctClampX : <input type="checkbox" id="field_osc_octClampX" style="margin: -15px;padding: 0px;">]<br>
                         [OctClampY : <input type="checkbox" id="field_osc_octClampY" style="margin: -15px;padding: 0px">]<br>
                         [OctClampXY : <input type="checkbox" id="field_osc_octClampXY" style="margin: -15px;padding: 0px">]
                     </div>
@@ -345,6 +351,8 @@
             GLOBAL_edo = field_osc_edo.value;
             GLOBAL_freq_facX = field_osc_freqX.value;
             GLOBAL_freq_facY = field_osc_freqY.value;
+            GLOBAL_freq_edoX = field_osc_edoX.value;
+            GLOBAL_freq_edoY = field_osc_edoY.value;
             GLOBAL_freq_octClampX = field_osc_octClampX.checked;
             GLOBAL_freq_octClampY = field_osc_octClampY.checked;
             GLOBAL_freq_octClampXY = field_osc_octClampXY.checked;
@@ -358,17 +366,43 @@
                     GLOBAL_freq.push(GLOBAL_freqFund * (2 ** (i/GLOBAL_edo)))
                 }
             }
-            else if (GLOBAL_layout === "2D")
+            else if (GLOBAL_layout === "2Dfrq" || GLOBAL_layout === "2Dedo")
             {
-                for(let i = 0 ; i < 4 ; i++)
-                {
-                    for(let j = 0 ; j < 8 ; j++)
-                    {
-                        //i = 0 : box * (freqX ^ -1)
-                        //j = 0 : box * (freY ^ -3)
-                        let newFactorX = GLOBAL_freq_facX ** (j-3);
-                        let newFactorY = GLOBAL_freq_facY ** (i-1);
+                //if we use 2Dfreq
+                //when i = 0 : facX * (CoordY ^ -1) //up down
+                //when j = 0 : facY * (CoordX ^ -3) //left right
 
+                //if we use 2Dedo
+                //when i = 0 : (2 ^ (edoX / edo)) * (CoordY ^ -1) //up down
+                //when j = 0 : (2 ^ (edoY / edo)) * (CoordX ^ -3) //left right
+
+                for(let i = 0 ; i < 4 ; i++) //for every row
+                {
+                    //what is the relationship along the Y direction ?
+                    let newFactorY;
+                    if (GLOBAL_layout === "2Dfrq")
+                    {
+                        newFactorY = GLOBAL_freq_facY ** (i-1);
+                    }
+                    else if (GLOBAL_layout === "2Dedo")
+                    {
+                        newFactorY = ( 2 ** (GLOBAL_freq_edoY / GLOBAL_edo) ) ** (i-1);
+                    }
+
+                    for(let j = 0 ; j < 8 ; j++) //for every button in a row
+                    {
+                        //what is the relationship between along the X direction
+                        let newFactorX;
+                        if (GLOBAL_layout === "2Dfrq")
+                        {
+                            newFactorX = GLOBAL_freq_facX ** (j-3);
+                        }
+                        else if (GLOBAL_layout === "2Dedo")
+                        {
+                            newFactorX = ( 2 ** (GLOBAL_freq_edoX / GLOBAL_edo) ) ** (j-3)
+                        }
+                        
+                        //do we need to clamp them in the same octave ?
                         if (GLOBAL_freq_octClampX)
                         {
                             while( (newFactorX !== 0 && newFactorX < 1) || 2 <= newFactorX )
@@ -383,8 +417,7 @@
                                 }
                             }
                         }
-
-                       if (GLOBAL_freq_octClampY)
+                        if (GLOBAL_freq_octClampY)
                         {
                             while( (newFactorY !== 0 && newFactorY < 1) || 2 <= newFactorY )
                             {
@@ -399,8 +432,10 @@
                             }
                         }
 
+                        //for a note say at position i and j, what is the total amount of factor ?
                         let newFactorXY = newFactorX * newFactorY
 
+                        //do we need to clamp it ?
                         if (GLOBAL_freq_octClampXY)
                         {
                             while( (newFactorXY !== 0 && newFactorXY < 1) || 2 <= newFactorXY )
@@ -416,6 +451,7 @@
                             }
                         }
 
+                        //apply it
                         GLOBAL_freq.push( GLOBAL_freqFund * newFactorXY)
                     }
                 }
@@ -896,11 +932,13 @@
         const field_osc_edotone = POwO_docgetel("field_osc_edotone")
         const field_osc_type    = POwO_docgetel("field_osc_type")
         const field_osc_edo     = POwO_docgetel("field_osc_edo")
-        const field_osc_layout  = POwO_docgetel("field_osc_layout")
-        const field_osc_freqIndex = POwO_docgetel("field_osc_freqIndex")
+        const field_osc_layout  = POwO_docgetel("field_osc_layout") //which layout we are using ? 1D ? 2Dfreq ? 2Dedo ? explicit ?
+        const field_osc_freqIndex = POwO_docgetel("field_osc_freqIndex") //choose which freqList we are using, 0~3
         const field_osc_fund    = POwO_docgetel("field_osc_fund")
         const field_osc_freqX   = POwO_docgetel("field_osc_freqX")
         const field_osc_freqY   = POwO_docgetel("field_osc_freqY")
+        const field_osc_edoX    = POwO_docgetel("field_osc_edoX")
+        const field_osc_edoY    = POwO_docgetel("field_osc_edoY")
         const field_osc_octClampX = POwO_docgetel("field_osc_octClampX")
         const field_osc_octClampY = POwO_docgetel("field_osc_octClampY")
         const field_osc_octClampXY = POwO_docgetel("field_osc_octClampXY")
@@ -928,8 +966,10 @@
         var GLOBAL_edo = 12;
         var GLOBAL_freqFund = 523.2511; //C5
         var GLOBAL_layout = "1D" //can be 1D or 2D
-        var GLOBAL_freq_facX = 3;
-        var GLOBAL_freq_facY = 5; 
+        var GLOBAL_freq_facX = 1.5;
+        var GLOBAL_freq_facY = 1.25;
+        var GLOBAL_freq_edoX = 4;
+        var GLOBAL_freq_edoY = 1; 
         var GLOBAL_freq_octClampX = false;
         var GLOBAL_freq_octClampY = false;
         var GLOBAL_freq_octClampXY = false;
