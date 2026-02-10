@@ -622,6 +622,8 @@ function POwO_canvas_collect()
         //turn it into Degrees
         //here we use lerp mapping
         let DegRes = POwO_Math_LERPmap(0,1,LERPt,0,360)
+        DegRes += 360
+        DegRes = DegRes % 360
 
         if (isNaN(DegRes))
         {
@@ -635,7 +637,6 @@ function POwO_canvas_collect()
     }
 
     OutArray.sort(function(a, b) {return a - b;});//so that the polygon will not twist
-
     return OutArray;
 }
 
