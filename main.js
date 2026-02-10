@@ -548,21 +548,55 @@ function POwO_canvas_draw(InArray)
     //draw ring
     RadiusBig = 200;
     KanvasContext.lineWidth = 1;        // ring thickness
-    KanvasContext.strokeStyle = "rgba(255,192,0,0.5)"  // ring color
+    KanvasContext.strokeStyle = "rgba(" + COLOR_MAIN + ",0.5)"  // ring color
     KanvasContext.beginPath();
     KanvasContext.arc(cx, cy, RadiusBig, 0, Math.PI * 2);
     KanvasContext.stroke();
 
     //draw smaller circles
+    //at the same time, collect positions for polygon
     RadiusSmol = 25;
-    KanvasContext.fillStyle = "rgba(255,192,0,1)"
+    KanvasContext.fillStyle = "rgba(" + COLOR_MAIN + ",1)"
+    let temp_polygon_pos = []
     for(let i = 0 ; i < InArray.length ; i++)
     {
         let DegInRad = InArray[i] / 180 * Math.PI;
-        KanvasContext.beginPath();
-        KanvasContext.arc(cx + Math.cos(DegInRad) * RadiusBig, cy - Math.sin(DegInRad) * RadiusBig, RadiusSmol, 0, Math.PI * 2);
-        KanvasContext.stroke();  
-        KanvasContext.fill()
+        let temp_thisX = cx + Math.cos(DegInRad) * RadiusBig
+        let temp_thisY = cy - Math.sin(DegInRad) * RadiusBig
+        temp_polygon_pos.push( [temp_thisX,temp_thisY] )
+
+        if (field_visual_chord_dott.checked)
+        {
+            KanvasContext.beginPath();
+            KanvasContext.arc(temp_thisX, temp_thisY, RadiusSmol, 0, Math.PI * 2);
+            KanvasContext.stroke();  
+            KanvasContext.fill()
+        }
+    }
+
+    //now draw polygon
+    if (temp_polygon_pos.length > 0)
+    {
+        KanvasContext.beginPath()
+        KanvasContext.moveTo( temp_polygon_pos[0][0] , temp_polygon_pos[0][1] ) //begining position
+        for(let i = 1 ; i < temp_polygon_pos.length; i++)
+        {
+            KanvasContext.lineTo(temp_polygon_pos[i][0], temp_polygon_pos[i][1])
+        }
+        KanvasContext.closePath()
+        if (field_visual_chord_fill.checked)
+        {
+            KanvasContext.fillStyle = "rgba(" + COLOR_MAIN + ",0.25)"
+            KanvasContext.fill()
+        }
+        if (field_visual_chord_line.checked)
+        {
+            KanvasContext.strokeStyle = "rgba(" + COLOR_MAIN + ",0.5)"
+            KanvasContext.lineWidth = 1
+            KanvasContext.stroke()
+        }
+
+
     }
 }
 
@@ -588,8 +622,19 @@ function POwO_canvas_collect()
         //turn it into Degrees
         //here we use lerp mapping
         let DegRes = POwO_Math_LERPmap(0,1,LERPt,0,360)
-        OutArray.push(DegRes)
+
+        if (isNaN(DegRes))
+        {
+            
+        }
+        else
+        {
+            OutArray.push(DegRes)
+        }
+        
     }
+
+    OutArray.sort(function(a, b) {return a - b;});//so that the polygon will not twist
 
     return OutArray;
 }
@@ -605,6 +650,7 @@ function POwO_canvas_collect()
 //html css related stuff
 var COLOR_ON = "1"
 var COLOR_OFF = "0.1"
+var COLOR_MAIN = "255,192,0"
 var Array_KeyPressString = ["z","x","c","v","b","n","m",",","a","s","d","f","g","h","j","k","q","w","e","r","t","y","u","i","1","2","3","4","5","6","7","8"]
 var Array_Rectangles =
 [
@@ -673,6 +719,12 @@ const field_filter_lowshlf_freq = POwO_docgetel("field_filter_lowshlf_freq");
 const field_filter_lowshlf_gain = POwO_docgetel("field_filter_lowshlf_gain");
 const field_filter_hghshlf_freq = POwO_docgetel("field_filter_hghshlf_freq");
 const field_filter_hghshlf_gain = POwO_docgetel("field_filter_hghshlf_gain");
+
+const field_visual_color_main = POwO_docgetel("field_visual_color_main");
+const field_visual_color_bg = POwO_docgetel("field_visual_color_bg");
+const field_visual_chord_dott = POwO_docgetel("field_visual_chord_dott")
+const field_visual_chord_line = POwO_docgetel("field_visual_chord_line")
+const field_visual_chord_fill = POwO_docgetel("field_visual_chord_fill")
 
 const field_control_currentChoice = POwO_docgetel("CONTROL_print")
 const field_adktSetup = POwO_docgetel("field_adktSetup")
@@ -839,6 +891,44 @@ document.addEventListener("keyup", (event) =>
 
 
 
+//---- ---- ---- ---- visual stuffs
+
+field_visual_color_main.addEventListener("change",(event) => {
+    COLOR_MAIN = field_visual_color_main.value
+    let temp_newcolor = "rgba(" + COLOR_MAIN + ",0.1)"
+
+    for(var i = 0 ; i < Array_Rectangles.length ; i++)
+    {
+        Array_Rectangles[i].style.backgroundColor = temp_newcolor
+    }
+
+    btn_wave_sin.style.backgroundColor = temp_newcolor
+    btn_wave_tri.style.backgroundColor = temp_newcolor
+    btn_wave_saw.style.backgroundColor = temp_newcolor
+    btn_wave_sqr.style.backgroundColor = temp_newcolor
+
+    btn_adktSetup.style.backgroundColor = temp_newcolor
+    btn_freqconfig.style.backgroundColor = temp_newcolor
+    btn_oct_d.style.backgroundColor = temp_newcolor
+    btn_oct_u.style.backgroundColor = temp_newcolor
+    btn_smi_d.style.backgroundColor = temp_newcolor
+    btn_smi_u.style.backgroundColor = temp_newcolor
+
+    btn_mod_l.style.backgroundColor = temp_newcolor
+    btn_prm_l.style.backgroundColor = temp_newcolor
+    btn_prm_d.style.backgroundColor = temp_newcolor
+    btn_prm_u.style.backgroundColor = temp_newcolor
+    btn_prm_r.style.backgroundColor = temp_newcolor
+    btn_mod_r.style.backgroundColor = temp_newcolor
+
+    console.log("color_main = " + COLOR_MAIN)
+})
+
+field_visual_color_bg.addEventListener("change",(event) => {
+    document.body.style.backgroundColor = "rgba(" + field_visual_color_bg.value + ")"
+})
+
+
 //---- ---- ---- ---- mobile controls
 
 for(let i = 0 ; i < Array_Rectangles.length ; i++)
@@ -886,7 +976,7 @@ setInterval(function(){
 
             Array_AudioNodes_adsr[i].gain.setValueAtTime(  TargetGain, adkt.currentTime );
 
-            Array_Rectangles[i].style.backgroundColor = "rgba(255,204,0," + (POwO_Math_LERP(0.1,1,TargetGain)).toString() + ")" 
+            Array_Rectangles[i].style.backgroundColor = "rgba(" + COLOR_MAIN + "," + (POwO_Math_LERP(0.1,1,TargetGain)).toString() + ")" 
         }
         
     }
