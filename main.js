@@ -81,18 +81,19 @@ function POwO_setOscFreq()
         {
             GLOBAL_freq.push(GLOBAL_freqFund * (2 ** (i/GLOBAL_edo)))
         }
+        console.log("freq set : 1D ",GLOBAL_freq)
     }
     else if (GLOBAL_layout === "2Dfrq" || GLOBAL_layout === "2Dedo")
     {
         //if we use 2Dfreq
         //when i = 0 : facX * (CoordY ^ -1) //up down
-        //when j = 0 : facY * (CoordX ^ -3) //left right
+        //when j = 0 : facY * (CoordX ^ -4) //left right
 
         //if we use 2Dedo
         //when i = 0 : (2 ^ (edoX / edo)) * (CoordY ^ -1) //up down
-        //when j = 0 : (2 ^ (edoY / edo)) * (CoordX ^ -3) //left right
+        //when j = 0 : (2 ^ (edoY / edo)) * (CoordX ^ -4) //left right
 
-        for(let i = 0 ; i < 4 ; i++) //for every row
+        for(let i = 0 ; i < GLOBAL_Latice_Height ; i++) //for every row
         {
             //what is the relationship along the Y direction ?
             let newFactorY;
@@ -105,17 +106,17 @@ function POwO_setOscFreq()
                 newFactorY = ( 2 ** (GLOBAL_freq_edoY / GLOBAL_edo) ) ** (i-1);
             }
 
-            for(let j = 0 ; j < 8 ; j++) //for every button in a row
+            for(let j = 0 ; j < GLOBAL_Latice_Width ; j++) //for every button in a row
             {
                 //what is the relationship between along the X direction
                 let newFactorX;
                 if (GLOBAL_layout === "2Dfrq")
                 {
-                    newFactorX = GLOBAL_freq_facX ** (j-3);
+                    newFactorX = GLOBAL_freq_facX ** (j-4);
                 }
                 else if (GLOBAL_layout === "2Dedo")
                 {
-                    newFactorX = ( 2 ** (GLOBAL_freq_edoX / GLOBAL_edo) ) ** (j-3)
+                    newFactorX = ( 2 ** (GLOBAL_freq_edoX / GLOBAL_edo) ) ** (j-4)
                 }
                 
                 //do we need to clamp them in the same octave ?
@@ -205,6 +206,8 @@ function POwO_setOscFreq()
     {
         console.log((Array_AudioNodes_osc[i].frequency.value))
     }
+
+    POwO_RectangleTextPinPoint()
 }
 
 //copies the frequencies from the Main working Array to the List Array based on the given Index
@@ -420,6 +423,21 @@ function POwO_musicButtonUp(InString)
     POwO_canvas_draw(POwO_canvas_collect())
 }
 
+function POwO_RectangleTextPinPoint()
+{
+    for(let i = 0 ; i < Array_Rectangles.length ; i++)
+    {
+        if (Math.abs(GLOBAL_freq[i] - GLOBAL_freqFund) < 0.001 )
+        {
+             Array_Rectangles[i].textContent = "[ " + Array_KeyPressString[i] + " ]"
+        }
+        else
+        {
+             Array_Rectangles[i].textContent = Array_KeyPressString[i]
+        }
+    }
+}
+
 //multiply all notes by a given factor
 function POwO_musicAllNotesMigrate( InFactor )
 {
@@ -432,7 +450,7 @@ function POwO_musicAllNotesMigrate( InFactor )
         console.log("New Freq : " + Array_AudioNodes_osc[i].frequency)
     }
 
-    
+    POwO_RectangleTextPinPoint()
 }
 
 function POwO_control_ModL()
@@ -652,47 +670,47 @@ function POwO_canvas_collect()
 var COLOR_ON = "1"
 var COLOR_OFF = "0.1"
 var COLOR_MAIN = "255,192,0"
-var Array_KeyPressString = ["z","x","c","v","b","n","m",",","a","s","d","f","g","h","j","k","q","w","e","r","t","y","u","i","1","2","3","4","5","6","7","8"]
+var Array_KeyPressString =
+[
+    "z","x","c","v","b","n","m",",",".","/",
+    "a","s","d","f","g","h","j","k","l",";",
+    "q","w","e","r","t","y","u","i","o","p",
+    "1","2","3","4","5","6","7","8","9","0"
+]
+var Array_SettingsString =
+[   "oct ↓",    "oct ↑",    "\u00A0","\u00A0","mod ←","prm ←","prm ↓","prm ↑","prm →","mod →",
+    "edo ←",    "edo ↓",    "edo →","frq ←","frq ↓","frq →","\u00A0","\u00A0","\u00A0","\u00A0",
+    "edo -",   "edo ↑",    "edo +","\u00A0","frq ↑","\u00A0","\u00A0","\u00A0","\u00A0","\u00A0",
+    "◯",       "△",       "◺","▢","set0","set1","set2","set3","\u00A0","hde/shw"
+]
 var Array_Rectangles =
 [
-    POwO_docgetel("rec_00") , POwO_docgetel("rec_01") , POwO_docgetel("rec_02") , POwO_docgetel("rec_03") ,
-    POwO_docgetel("rec_04") , POwO_docgetel("rec_05") , POwO_docgetel("rec_06") , POwO_docgetel("rec_07") ,
-    POwO_docgetel("rec_08") , POwO_docgetel("rec_09") , POwO_docgetel("rec_0A") , POwO_docgetel("rec_0B") ,
-    POwO_docgetel("rec_0C") , POwO_docgetel("rec_0D") , POwO_docgetel("rec_0E") , POwO_docgetel("rec_0F") ,
+    POwO_docgetel("rec_00") , POwO_docgetel("rec_01") , POwO_docgetel("rec_02") , POwO_docgetel("rec_03") , POwO_docgetel("rec_04") ,
+    POwO_docgetel("rec_05") , POwO_docgetel("rec_06") , POwO_docgetel("rec_07") , POwO_docgetel("rec_08") , POwO_docgetel("rec_09") ,
 
-    POwO_docgetel("rec_10") , POwO_docgetel("rec_11") , POwO_docgetel("rec_12") , POwO_docgetel("rec_13") ,
-    POwO_docgetel("rec_14") , POwO_docgetel("rec_15") , POwO_docgetel("rec_16") , POwO_docgetel("rec_17") ,
-    POwO_docgetel("rec_18") , POwO_docgetel("rec_19") , POwO_docgetel("rec_1A") , POwO_docgetel("rec_1B") ,
-    POwO_docgetel("rec_1C") , POwO_docgetel("rec_1D") , POwO_docgetel("rec_1E") , POwO_docgetel("rec_1F")
+    POwO_docgetel("rec_10") , POwO_docgetel("rec_11") , POwO_docgetel("rec_12") , POwO_docgetel("rec_13") , POwO_docgetel("rec_14") ,
+    POwO_docgetel("rec_15") , POwO_docgetel("rec_16") , POwO_docgetel("rec_17") , POwO_docgetel("rec_18") , POwO_docgetel("rec_19") ,
+
+    POwO_docgetel("rec_20") , POwO_docgetel("rec_21") , POwO_docgetel("rec_22") , POwO_docgetel("rec_23") , POwO_docgetel("rec_24") ,
+    POwO_docgetel("rec_25") , POwO_docgetel("rec_26") , POwO_docgetel("rec_27") , POwO_docgetel("rec_28") , POwO_docgetel("rec_29") ,
+
+    POwO_docgetel("rec_30") , POwO_docgetel("rec_31") , POwO_docgetel("rec_32") , POwO_docgetel("rec_33") , POwO_docgetel("rec_34") ,
+    POwO_docgetel("rec_35") , POwO_docgetel("rec_36") , POwO_docgetel("rec_37") , POwO_docgetel("rec_38") , POwO_docgetel("rec_39")
+
 ] //every square grid you see at the screen, 4x8=32 of them
 var Array_KeyPressDetect = []; //we use this to detect if a key is pressed or released, (released is 0, pressed is 1)
 for(let i = 0 ; i < Array_KeyPressString.length ; i ++)
 {
     //for now, fill it up with 32 '0's
-    Array+Array_KeyPressDetect.push(0);
+    Array_KeyPressDetect.push(0);
 }
-
-const btn_wave_sin = POwO_docgetel("btn_wave_sin")
-const btn_wave_tri = POwO_docgetel("btn_wave_tri")
-const btn_wave_saw = POwO_docgetel("btn_wave_saw")
-const btn_wave_sqr = POwO_docgetel("btn_wave_sqr")
 
 const btn_freqconfig = POwO_docgetel("btn_freqconfig")
 const btn_adktSetup = POwO_docgetel("btn_adktSetup")
 
-const btn_oct_d = POwO_docgetel("btn_oct_d");
-const btn_oct_u = POwO_docgetel("btn_oct_u");
-const btn_smi_d = POwO_docgetel("btn_smi_d");
-const btn_smi_u = POwO_docgetel("btn_smi_u");
-const btn_mod_l = POwO_docgetel("btn_mod_l");
-const btn_prm_l = POwO_docgetel("btn_prm_l");
-const btn_prm_d = POwO_docgetel("btn_prm_d");
-const btn_prm_u = POwO_docgetel("btn_prm_u");
-const btn_prm_r = POwO_docgetel("btn_prm_r");
-const btn_mod_r = POwO_docgetel("btn_mod_r");
-
 const field_osc_octave  = POwO_docgetel("field_osc_octave")
 const field_osc_edotone = POwO_docgetel("field_osc_edotone")
+const field_osc_freqoff = POwO_docgetel("field_osc_freqoff")
 const field_osc_type    = POwO_docgetel("field_osc_type")
 const field_osc_edo     = POwO_docgetel("field_osc_edo")
 const field_osc_layout  = POwO_docgetel("field_osc_layout") //which layout we are using ? 1D ? 2Dfreq ? 2Dedo ? explicit ?
@@ -742,6 +760,9 @@ var GLOBAL_freq_edoY = 1;
 var GLOBAL_freq_octClampX = false;
 var GLOBAL_freq_octClampY = false;
 var GLOBAL_freq_octClampXY = false;
+var GLOBAL_Latice_Width = 10;
+var GLOBAL_Latice_Height = 4;
+if (GLOBAL_Latice_Height * GLOBAL_Latice_Width !== Array_Rectangles.length){console.log("warning : GLOBAL_Latice_Width and GLOBAL_Latice_Height might be wrong, var declaration")}
 var GLOBAL_freq = [];
 var GLOBAL_freq_Index = 0; //to know which freq List is the user using
 var GLOBAL_freq_List0 = []; //these are like frequency presets defined by users
@@ -841,27 +862,59 @@ function POwO_InterfaceControl_Down(InString)
 
     POwO_musicButtonDown(InString);
 
-    if (InString === "="){POwO_adktSetup()}
-    else if (InString === "-"){POwO_setOscFreq(); POwO_printFreqsAll(); }
-    else if (InString === "!"){POwO_setOscType("sine")}
-    else if (InString === "@"){POwO_setOscType("triangle")}
-    else if (InString === "#"){POwO_setOscType("sawtooth")}
-    else if (InString === "$"){POwO_setOscType("square")}
-    else if (InString === "o"){GLOBAL_freq_Index = 0; POwO_fromListFreqToMainFreq(0);POwO_printFreqsAll();}
-    else if (InString === "p"){GLOBAL_freq_Index = 1; POwO_fromListFreqToMainFreq(1);POwO_printFreqsAll();}
-    else if (InString === "["){GLOBAL_freq_Index = 2; POwO_fromListFreqToMainFreq(2);POwO_printFreqsAll();}
-    else if (InString === "]"){GLOBAL_freq_Index = 3; POwO_fromListFreqToMainFreq(3);POwO_printFreqsAll();}
-    else if (InString === "Z"){POwO_musicAllNotesMigrate(0.5); field_osc_octave.textContent = Number(field_osc_octave.textContent)-1 }
-    else if (InString === "X"){POwO_musicAllNotesMigrate(2); field_osc_octave.textContent = Number(field_osc_octave.textContent)+1 }
-    else if (InString === "C"){POwO_musicAllNotesMigrate(1/(2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)-1}
-    else if (InString === "V"){POwO_musicAllNotesMigrate((2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)+1}
-    else if (InString === "B"){POwO_control_ModL()}
-    else if (InString === "N"){POwO_control_PrmL()}
-    else if (InString === "M"){POwO_control_Change("-")}
-    else if (InString === "<"){POwO_control_Change("+")}
-    else if (InString === ">"){POwO_control_PrmR()}
-    else if (InString === "?"){POwO_control_ModR()}
-    else if (InString === "0"){POwO_interface_ToggleText()}
+    switch (InString) {
+        case "=" : POwO_adktSetup() ; break ;
+        case "-" : POwO_setOscFreq() ; POwO_printFreqsAll() ; field_osc_edotone.textContent = 0 ; field_osc_edotone.textContent = 1 ; break ;
+
+        case "!" : POwO_setOscType("sine") ; break ;
+        case "@" : POwO_setOscType("triangle") ; break ;
+        case "#" : POwO_setOscType("sawtooth") ; break ;
+        case "$" : POwO_setOscType("square") ; break ;
+
+        case "%" : GLOBAL_freq_Index = 0; POwO_fromListFreqToMainFreq(0); POwO_printFreqsAll() ; break ;
+        case "^" : GLOBAL_freq_Index = 1; POwO_fromListFreqToMainFreq(1); POwO_printFreqsAll() ; break ;
+        case "&" : GLOBAL_freq_Index = 2; POwO_fromListFreqToMainFreq(2); POwO_printFreqsAll() ; break ;
+        case "*" : GLOBAL_freq_Index = 3; POwO_fromListFreqToMainFreq(3); POwO_printFreqsAll() ; break ;
+
+        case "Z" : POwO_musicAllNotesMigrate(0.5) ; field_osc_octave.textContent = Number(field_osc_octave.textContent)-1 ; break ;
+        case "X" : POwO_musicAllNotesMigrate(2) ; field_osc_octave.textContent = Number(field_osc_octave.textContent)+1 ; break ;
+
+        //edo panning
+        case "Q" : POwO_musicAllNotesMigrate(1/(2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)-1 ; break ;
+        case "E" : POwO_musicAllNotesMigrate((2**(1/GLOBAL_edo))) ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)+1 ; break ;
+        case "S" : POwO_musicAllNotesMigrate(1/(2**( GLOBAL_freq_edoY /GLOBAL_edo)))    ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)-GLOBAL_freq_edoY ; break ;
+        case "W" : POwO_musicAllNotesMigrate((2**(GLOBAL_freq_edoY/GLOBAL_edo)))        ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)+GLOBAL_freq_edoY ; break ;
+        case "A" : POwO_musicAllNotesMigrate(1/(2**( GLOBAL_freq_edoX /GLOBAL_edo)))    ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)-GLOBAL_freq_edoX ; break ;
+        case "D" : POwO_musicAllNotesMigrate((2**(GLOBAL_freq_edoX/GLOBAL_edo)))        ; field_osc_edotone.textContent = Number(field_osc_edotone.textContent)+GLOBAL_freq_edoX ; break ;
+
+        //freq panning
+        case "G" : POwO_musicAllNotesMigrate(1/GLOBAL_freq_facY)    ; field_osc_freqoff.textContent = Number(field_osc_freqoff.textContent) / GLOBAL_freq_facY ; break ;
+        case "T" : POwO_musicAllNotesMigrate(GLOBAL_freq_facY)      ; field_osc_freqoff.textContent = Number(field_osc_freqoff.textContent) * GLOBAL_freq_facY ; break ;
+        case "F" : POwO_musicAllNotesMigrate(1/GLOBAL_freq_facX)    ; field_osc_freqoff.textContent = Number(field_osc_freqoff.textContent) / GLOBAL_freq_facX ; break ;
+        case "H" : POwO_musicAllNotesMigrate(GLOBAL_freq_facX)      ; field_osc_freqoff.textContent = Number(field_osc_freqoff.textContent) * GLOBAL_freq_facX ; break ;
+
+        case "B" : POwO_control_ModL() ; break ;
+        case "N" : POwO_control_PrmL() ; break ;
+        case "M" : POwO_control_Change("-") ; break ;
+        case "<" : POwO_control_Change("+") ; break ;
+        case ">" : POwO_control_PrmR() ; break ;
+        case "?" : POwO_control_ModR() ; break ;
+
+        case ")" : POwO_interface_ToggleText() ; break ;
+        case "Shift" : for(let i = 0 ; i < Array_Rectangles.length ; i++){ Array_Rectangles[i].textContent = Array_SettingsString[i] } ; break ;
+
+    
+        default : break ;
+    }
+
+
+    
+    
+
+    //freq panning
+
+
+    
     
     
 }
@@ -869,6 +922,8 @@ function POwO_InterfaceControl_Down(InString)
 function POwO_InterfaceControl_Up(InString)
 {
     POwO_musicButtonUp(InString);
+
+    if (InString === "Shift"){POwO_RectangleTextPinPoint()}
 }
 
 
@@ -903,24 +958,8 @@ field_visual_color_main.addEventListener("change",(event) => {
         Array_Rectangles[i].style.backgroundColor = temp_newcolor
     }
 
-    btn_wave_sin.style.backgroundColor = temp_newcolor
-    btn_wave_tri.style.backgroundColor = temp_newcolor
-    btn_wave_saw.style.backgroundColor = temp_newcolor
-    btn_wave_sqr.style.backgroundColor = temp_newcolor
-
     btn_adktSetup.style.backgroundColor = temp_newcolor
     btn_freqconfig.style.backgroundColor = temp_newcolor
-    btn_oct_d.style.backgroundColor = temp_newcolor
-    btn_oct_u.style.backgroundColor = temp_newcolor
-    btn_smi_d.style.backgroundColor = temp_newcolor
-    btn_smi_u.style.backgroundColor = temp_newcolor
-
-    btn_mod_l.style.backgroundColor = temp_newcolor
-    btn_prm_l.style.backgroundColor = temp_newcolor
-    btn_prm_d.style.backgroundColor = temp_newcolor
-    btn_prm_u.style.backgroundColor = temp_newcolor
-    btn_prm_r.style.backgroundColor = temp_newcolor
-    btn_mod_r.style.backgroundColor = temp_newcolor
 
     console.log("color_main = " + COLOR_MAIN)
 })
@@ -939,26 +978,11 @@ for(let i = 0 ; i < Array_Rectangles.length ; i++)
 }
 btn_adktSetup.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("=")})
 btn_freqconfig.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("-")})
-btn_wave_sin.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("!") })
-btn_wave_tri.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("@")})
-btn_wave_saw.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("#")})
-btn_wave_sqr.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("$")})
-
-btn_oct_d.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("Z")})
-btn_oct_u.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("X")})
-btn_smi_d.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("C")})
-btn_smi_u.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("V")})
-
-btn_mod_l.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("B")})
-btn_prm_l.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("N")})
-btn_prm_d.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("M")})
-btn_prm_u.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("<")})
-btn_prm_r.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down(">")})
-btn_mod_r.addEventListener("touchstart" , () => {POwO_InterfaceControl_Down("?")})
-
 
 
 //---- ---- ---- ---- runtime trigger
+var ClearConsole_Max = 2000
+var ClearConsole_Cur = 2000
 
 setInterval(function(){
     if (isREADY)
@@ -981,4 +1005,6 @@ setInterval(function(){
         }
         
     }
+
+    if (ClearConsole_Cur > 0){ClearConsole_Cur --}else{console.clear() ; ClearConsole_Cur = ClearConsole_Max}
 },10)

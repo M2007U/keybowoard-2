@@ -10,7 +10,7 @@
     <div class="centerContainer">
         <div class="centerRow" style="display:flex;color:#666;font-size:16px;width:1920px;">
             <span style="text-align: center;">
-                ver 2025.0920.1634 <br><br>
+                ver 2026.0512.0730 <br><br>
                 
                 
                 <div class="centerRow">
@@ -18,6 +18,7 @@
                         <b style="font-size: 20px;">OSC_General</b><br><br>
                         [oct : <text id="field_osc_octave">5</text>]<br>
                         [edotone : <text id="field_osc_edotone">0</text>]<br>
+                        [freqoff : <text id="field_osc_freqoff">1</text>]<br>
                         [type : <text id="field_osc_type">square</text>]<br>
                         [layout : 
                         <select id="field_osc_layout">
@@ -88,70 +89,58 @@
         <div class="centerRow">
             <canvas id="kanvas" width="460" height="460"></canvas>
         </div>
-        
-
-
         <div class="centerRow">
-            <div id="btn_wave_sin" class="button">◯</div>
-            <div id="btn_wave_tri" class="button">△</div>
-            <div id="btn_wave_saw" class="button">◺</div>
-            <div id="btn_wave_sqr" class="button">▢</div>
-            <div style="width: 520px;"></div>
+            <div style="width: 900px;"></div>
             <div id="btn_freqconfig" class="button">-</div>
             <div id="btn_adktSetup" class="button">=</div>
         </div>
         <div class="centerRow" style="align-items: baseline;">
-            <div id="rec_18" class="rectangle"><span>1</span></div>
-            <div id="rec_19" class="rectangle"><span>2</span></div>
-            <div id="rec_1A" class="rectangle"><span>3</span></div>
-            <div id="rec_1B" class="rectangle"><span>4</span></div>
-            <div id="rec_1C" class="rectangle"><span>5</span></div>
-            <div id="rec_1D" class="rectangle"><span>6</span></div>
-            <div id="rec_1E" class="rectangle"><span>7</span></div>
-            <div id="rec_1F" class="rectangle"><span>8</span></div>
+            <div id="rec_30" class="rectangle">1</div>
+            <div id="rec_31" class="rectangle">2</div>
+            <div id="rec_32" class="rectangle">3</div>
+            <div id="rec_33" class="rectangle">4</div>
+            <div id="rec_34" class="rectangle">5</div>
+            <div id="rec_35" class="rectangle">6</div>
+            <div id="rec_36" class="rectangle">7</div>
+            <div id="rec_37" class="rectangle">8</div>
+            <div id="rec_38" class="rectangle">9</div>
+            <div id="rec_39" class="rectangle">0</div>
         </div>
         <div class="centerRow" style="align-items: baseline;">
-            <div id="rec_10" class="rectangle"><span>q</span></div>
-            <div id="rec_11" class="rectangle"><span>w</span></div>
-            <div id="rec_12" class="rectangle"><span>e</span></div>
-            <div id="rec_13" class="rectangle"><span>r</span></div>
-            <div id="rec_14" class="rectangle"><span>t</span></div>
-            <div id="rec_15" class="rectangle"><span>y</span></div>
-            <div id="rec_16" class="rectangle"><span>u</span></div>
-            <div id="rec_17" class="rectangle"><span>i</span></div>
+            <div id="rec_20" class="rectangle">q</div>
+            <div id="rec_21" class="rectangle">w</div>
+            <div id="rec_22" class="rectangle">e</div>
+            <div id="rec_23" class="rectangle">r</div>
+            <div id="rec_24" class="rectangle">t</div>
+            <div id="rec_25" class="rectangle">y</div>
+            <div id="rec_26" class="rectangle">u</div>
+            <div id="rec_27" class="rectangle">i</div>
+            <div id="rec_28" class="rectangle">o</div>
+            <div id="rec_29" class="rectangle">p</div>
         </div>
         <div class="centerRow" style="align-items: baseline;">
-            <div id="rec_08" class="rectangle"><span>a</span></div>
-            <div id="rec_09" class="rectangle"><span>s</span></div>
-            <div id="rec_0A" class="rectangle"><span>d</span></div>
-            <div id="rec_0B" class="rectangle"><span>[ f ]</span></div>
-            <div id="rec_0C" class="rectangle"><span>g</span></div>
-            <div id="rec_0D" class="rectangle"><span>h</span></div>
-            <div id="rec_0E" class="rectangle"><span>j</span></div>
-            <div id="rec_0F" class="rectangle"><span>k</span></div>
+            <div id="rec_10" class="rectangle">a</div>
+            <div id="rec_11" class="rectangle">s</div>
+            <div id="rec_12" class="rectangle">d</div>
+            <div id="rec_13" class="rectangle">f</div>
+            <div id="rec_14" class="rectangle">[ g ]</div>
+            <div id="rec_15" class="rectangle">h</div>
+            <div id="rec_16" class="rectangle">j</div>
+            <div id="rec_17" class="rectangle">k</div>
+            <div id="rec_18" class="rectangle">l</div>
+            <div id="rec_19" class="rectangle">;</div>
         </div>
         <div class="centerRow" style="align-items: baseline;">
-            <div id="rec_00" class="rectangle"><span>z</span></div>
-            <div id="rec_01" class="rectangle"><span>x</span></div>
-            <div id="rec_02" class="rectangle"><span>c</span></div>
-            <div id="rec_03" class="rectangle"><span>v</span></div>
-            <div id="rec_04" class="rectangle"><span>b</span></div>
-            <div id="rec_05" class="rectangle"><span>n</span></div>
-            <div id="rec_06" class="rectangle"><span>m</span></div>
-            <div id="rec_07" class="rectangle"><span>,</span></div>
-        </div>
-        <div class="centerRow">
-            <div id="btn_oct_d" class="button">oct ↓</div>
-            <div id="btn_oct_u" class="button">oct ↑</div>
-            <div id="btn_smi_d" class="button">semi ↓</div>
-            <div id="btn_smi_u" class="button">semi ↑</div>
-            <div style="width: 280px;"></div>
-            <div id="btn_mod_l" class="button">mod ←</div>
-            <div id="btn_prm_l" class="button">prm ←</div>
-            <div id="btn_prm_d" class="button">prm ↓</div>
-            <div id="btn_prm_u" class="button">prm ↑</div>
-            <div id="btn_prm_r" class="button">prm →</div>
-            <div id="btn_mod_r" class="button">mod →</div>
+            <div id="rec_00" class="rectangle">z</div>
+            <div id="rec_01" class="rectangle">x</div>
+            <div id="rec_02" class="rectangle">c</div>
+            <div id="rec_03" class="rectangle">v</div>
+            <div id="rec_04" class="rectangle">b</div>
+            <div id="rec_05" class="rectangle">n</div>
+            <div id="rec_06" class="rectangle">m</div>
+            <div id="rec_07" class="rectangle">,</div>
+            <div id="rec_08" class="rectangle">.</div>
+            <div id="rec_09" class="rectangle">/</div>
         </div>
         <div style="height:60px"></div>
         <div class="centerRow" style="display:flex;color:#606060;font-size:16px;width:1920px;">
