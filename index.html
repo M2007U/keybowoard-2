@@ -16,68 +16,85 @@
                 <div class="centerRow">
                     <div class="settingsBox">
                         <b style="font-size: 20px;">OSC_General</b><br><br>
-                        [oct : <text id="field_osc_octave">5</text>]<br>
-                        [edotone : <text id="field_osc_edotone">0</text>]<br>
-                        [freqoff : <text id="field_osc_freqoff">1</text>]<br>
-                        [type : <text id="field_osc_type">square</text>]<br>
-                        [layout : 
+                        oct : <text id="field_osc_octave">5</text><br>
+                        edotone : <text id="field_osc_edotone">0</text><br>
+                        freqoff : <text id="field_osc_freqoff">1</text><br>
+                        type : <text id="field_osc_type">square</text><br>
+                        layout : 
                         <select id="field_osc_layout">
                             <option value="1D">1D</option>
                             <option value="2Dfrq">2D - freq</option>
                             <option value="2Dedo">2D - edo</option>
                             <option value="explicit">Explicit</option>
                         </select>]<br>
-                        [freqList Index : <text id="field_osc_freqIndex">0</text>]
+                        freqList Index : <text id="field_osc_freqIndex">0</text>
                     </div>
                     <div class="settingsBox">
                         <b style="font-size: 20px;">Layout_1D&2D</b><br><br>
-                        [edo : <input type="number" id="field_osc_edo" min="1" step="1" placeholder="notes per octave" value="12">]<br>
-                        [fund : <input type="number" id="field_osc_fund" min="0.00390625" step="0.00390625" placeholder="fundamental freq" value="523.2511" style="width:80px">]<br>
-                        
-                        [freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="1.5">]<br>
-                        [freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="1.25">]<br>
-
-                        [edoX : <input type="number" id="field_osc_edoX" step="1" placeholder="edo factor X" value="4">]<br>
-                        [edoY : <input type="number" id="field_osc_edoY" step="1" placeholder="edo factor Y" value="1">]<br>
-
-                        [OctClampX : <input type="checkbox" id="field_osc_octClampX" style="margin: -15px;padding: 0px;">]<br>
-                        [OctClampY : <input type="checkbox" id="field_osc_octClampY" style="margin: -15px;padding: 0px">]<br>
-                        [OctClampXY : <input type="checkbox" id="field_osc_octClampXY" style="margin: -15px;padding: 0px">]
+                        edo : <input type="number" id="field_osc_edo" min="1" step="1" placeholder="notes per octave" value="12"><br>
+                        fund : <input type="number" id="field_osc_fund" min="0.00390625" step="0.00390625" placeholder="fundamental freq" value="523.2511" style="width:80px"><br>
+                        <br>
+                        freqX : <input type="number" id="field_osc_freqX" min="0.00390625" step="0.00390625" placeholder="freq factor X" value="1.5"><br>
+                        freqY : <input type="number" id="field_osc_freqY" min="0.00390625" step="0.00390625" placeholder="freq factor Y" value="1.25"><br>
+                        <br>
+                        edoX : <input type="number" id="field_osc_edoX" step="1" placeholder="edo factor X" value="4"><br>
+                        edoY : <input type="number" id="field_osc_edoY" step="1" placeholder="edo factor Y" value="1"><br>
+                        <br>
+                        OctClampX : <input type="checkbox" id="field_osc_octClampX" style="margin: -15px;padding: 0px;"><br>
+                        OctClampY : <input type="checkbox" id="field_osc_octClampY" style="margin: -15px;padding: 0px"><br>
+                        OctClampXY : <input type="checkbox" id="field_osc_octClampXY" style="margin: -15px;padding: 0px">
                     </div>
                     <div class="settingsBox">
                         <b style="font-size: 20px;">Layout_Explicit</b><br><br>
-                        [freqList : <br><textarea type="text" id="field_osc_freqL" style="width:150px;height:130px;background-color: transparent;color:#666;">
+                        freqList : <br><textarea type="text" id="field_osc_freqL" style="width:150px;height:130px;background-color: transparent;color:#666;">
                             523.2511,587.3295,659.2551,698.4565,783.9909,880,987.7666,1046.5022,0,554.3653,622.254,0,739.9888,830.6094,932.3275,0,1046.5022,1174.659,1318.5102,1396.913,1567.9818,1760,1975.5332,2093.0044,0,1108.7306,1244.508,0,1479.9776,1661.2188,1864.655,0
-                        </textarea>  ]
+                        </textarea>
                     </div>
-                    <div class="settingsBox">
+                    <div style="height:482px;">
+                    <div class="settingsBox" style="height:125px;margin-top:0px;margin-bottom:0px">
                         <b style="font-size: 20px;">ADSR</b><br><br>
-                        [atk : <text id="field_adsr_atk">1</text>]<br>
-                        [sus : <text id="field_adsr_sus">1</text>]<br>
-                        [rel : <text id="field_adsr_rel">1</text>]<br>
-                        [vol : <text id="field_adsr_vol">0.125</text>]
+                        atk : <text id="field_adsr_atk">1</text><br>
+                        sus : <text id="field_adsr_sus">1</text><br>
+                        rel : <text id="field_adsr_rel">1</text><br>
+                        vol : <text id="field_adsr_vol">0.125</text>
                     </div>
-                    <div class="settingsBox">
+                    <div style="height:18px"></div>
+                    <div class="settingsBox" style="height:275px;margin-top:0px;margin-bottom:0px">
                         <b style="font-size: 20px;">FILTER</b><br><br>
-                        [lowpass > freq : <text id="field_filter_lowpass_freq">20000</text>]<br>
-                        [lowpass > reso : <text id="field_filter_lowpass_reso">1</text>]<br>
-                        [hghpass > freq : <text id="field_filter_hghpass_freq">0</text>]<br>
-                        [hghpass > reso : <text id="field_filter_hghpass_reso">1</text>]<br>
-                        [lowshlf > freq : <text id="field_filter_lowshlf_freq">0</text>]<br>
-                        [lowshlf > gain : <text id="field_filter_lowshlf_gain">0</text>]<br>
-                        [hghshlf > freq : <text id="field_filter_hghshlf_freq">20000</text>]<br>
-                        [hghshlf > gain : <text id="field_filter_hghshlf_gain">0</text>]
+                        lowpass > freq : <text id="field_filter_lowpass_freq">20000</text><br>
+                        lowpass > reso : <text id="field_filter_lowpass_reso">1</text><br>
+                        <br>
+                        hghpass > freq : <text id="field_filter_hghpass_freq">0</text><br>
+                        hghpass > reso : <text id="field_filter_hghpass_reso">1</text><br>
+                        <br>
+                        lowshlf > freq : <text id="field_filter_lowshlf_freq">0</text><br>
+                        lowshlf > gain : <text id="field_filter_lowshlf_gain">0</text><br>
+                        <br>
+                        hghshlf > freq : <text id="field_filter_hghshlf_freq">20000</text><br>
+                        hghshlf > gain : <text id="field_filter_hghshlf_gain">0</text>
+                    </div>
                     </div>
                     <div class="settingsBox">
                         <b style="font-size: 20px;">VISUAL</b><br><br>
-                        color main : <input style="width:80px" type="text" id="field_visual_color_main" value="255,192,0"><br>
-                        color bg : <input style="width:80px" type="text" id="field_visual_color_bg" value="0,0,0,0"><br>
-                        chord dott : <input type="checkbox" id="field_visual_chord_dott" style="margin: -15px;padding: 0px;" checked><br>
-                        chord line : <input type="checkbox" id="field_visual_chord_line" style="margin: -15px;padding: 0px;"><br>
-                        chord fill : <input type="checkbox" id="field_visual_chord_fill" style="margin: -15px;padding: 0px;">
+                        color main : <input style="width:80px" type="text" id="field_visual_color_main"    value="255,192,0"><br>
+                        color bg : <input style="width:80px" type="text" id="field_visual_color_bg"      value="0,0,0,0"><br>
+                        <br>
+                        ring radius :  <input style="width:80px" type="text" id="field_visual_ring_radius" value="200"><br>
+                        ring thickness : <input style="width:80px" type="text" id="field_visual_ring_line" value="1"><br>
+                        ring margin : <input style="width:80px" type="text" id="field_visual_ring_margin" value="50"><br>
+                        <br>
+                        chord dot radius : <input style="width:80px" type="text" id="field_visual_chord_dott" value="25" ><br>
+                        chord line thickness : <input style="width:80px" type="text" id="field_visual_chord_line" value="1"><br>
+                        chord fill : <input style="margin: -15px;padding: 0px;" type="checkbox" id="field_visual_chord_fill" ><br>
+                        <br>
+                        angle factor :  <input style="width:80px" type="text" id="field_visual_angle_factor" value="1" ><br>
+                        angle phase : <input style="width:80px" type="text" id="field_visual_angle_phase" value="0" ><br>
+                        <br>
+                        edo mark radius : <input style="width:80px" type="text" id="field_visual_edomark_radius" value="10" ><br>
+                        edo mark thickness : <input style="width:80px" type="text" id="field_visual_edomark_thickness" value="1" ><br>
+                        edo mark font-size : <input style="width:80px" type="text" id="field_visual_edomark_fontSize" value="25" ><br>
+                        edo mark font radius : <input style="width:80px" type="text" id="field_visual_edomark_fontRadius" value="225" >
                     </div>
-
-
                 </div>
                 <br>
                 <text style="color:#403000;font-size:16px">[Currently Adjusting : <text  id="CONTROL_print">ASDR > overall</text>]</text>

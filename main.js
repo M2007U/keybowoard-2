@@ -56,6 +56,11 @@ function POwO_Math_LERPmap(a,b,v,A,B)
     return POwO_Math_LERP(A,B,t);
 }
 
+function POwO_Math_DegToRad(inDegrees)
+{
+    return inDegrees / 180 * Math.PI
+}
+
 //configure the frequency for all notes
 //this will only affect the main array, not the other Freq lists
 //refer to var declarations
@@ -560,33 +565,79 @@ function POwO_canvas_draw(InArray)
     KanvasContext.clearRect(0, 0, Kanvas.width, Kanvas.height)
     let cx = Kanvas.width / 2;
     let cy = Kanvas.height / 2;
-    let RadiusBig = 0;
-    let RadiusSmol = 0;
 
-    //draw ring
-    RadiusBig = 200;
-    KanvasContext.lineWidth = 1;        // ring thickness
-    KanvasContext.strokeStyle = "rgba(" + COLOR_MAIN + ",0.5)"  // ring color
-    KanvasContext.beginPath();
-    KanvasContext.arc(cx, cy, RadiusBig, 0, Math.PI * 2);
-    KanvasContext.stroke();
+
+    //draw ring    
+    if (GLOBAL_visual_ring_thickness > 0 && GLOBAL_visual_ring_radius > 0 )
+    {
+        KanvasContext.lineWidth = GLOBAL_visual_ring_thickness;        // ring thickness
+        KanvasContext.strokeStyle = "rgba(" + COLOR_MAIN + ",0.5)"  // ring color
+        KanvasContext.beginPath();
+        KanvasContext.arc(cx, cy, GLOBAL_visual_ring_radius, 0, Math.PI * 2);
+        KanvasContext.stroke();
+    }
+
+
+    //draw edo
+
+        //get angles
+        let temp_edoAngles = []
+        for(let i = 0 ; i < GLOBAL_edo ; i++)
+        {
+            let correctAngle = ( i / GLOBAL_edo ) * (Math.PI * 2)
+            temp_edoAngles.push(correctAngle * GLOBAL_visual_angle_factor + POwO_Math_DegToRad(GLOBAL_visual_angle_phase))
+        }
+
+        //draw tick marks ?
+        if (GLOBAL_visual_edomark_radius !== 0 && GLOBAL_visual_edomark_thickness > 0)
+        {
+            let RadiusInner = GLOBAL_visual_ring_radius
+            let RadiusOuter = GLOBAL_visual_ring_radius + GLOBAL_visual_edomark_radius
+            KanvasContext.lineWidth = GLOBAL_visual_edomark_thickness
+            KanvasContext.strokeStyle = "rgba(" + COLOR_MAIN + ",0.5)"
+
+            for(let i = 0 ; i < temp_edoAngles.length ; i++)
+            {
+                //draw tick mark
+                KanvasContext.beginPath()
+                KanvasContext.moveTo( cx + Math.cos(temp_edoAngles[i]) * RadiusInner , cy - Math.sin(temp_edoAngles[i]) * RadiusInner )
+                KanvasContext.lineTo( cx + Math.cos(temp_edoAngles[i]) * RadiusOuter , cy - Math.sin(temp_edoAngles[i]) * RadiusOuter )
+                KanvasContext.stroke()
+            }
+        }
+
+        //draw edo text ?
+        if (GLOBAL_visual_edomark_fontSize > 0)
+        {
+            KanvasContext.fillStyle = "rgba(" + COLOR_MAIN + ",0.5)"
+            KanvasContext.textAlign = "center"
+            KanvasContext.textBaseline = "middle"
+            KanvasContext.font = GLOBAL_visual_edomark_fontSize + "px Calibri"
+
+            for(let i = 0 ; i < temp_edoAngles.length ; i++)
+            {
+                KanvasContext.fillText(i.toString() , cx + Math.cos(temp_edoAngles[i]) * GLOBAL_visual_edomark_fontRadius , cy - Math.sin(temp_edoAngles[i]) * GLOBAL_visual_edomark_fontRadius )
+            }
+        }
+
+    //draw edo done
+    
 
     //draw smaller circles
     //at the same time, collect positions for polygon
-    RadiusSmol = 25;
     KanvasContext.fillStyle = "rgba(" + COLOR_MAIN + ",1)"
     let temp_polygon_pos = []
     for(let i = 0 ; i < InArray.length ; i++)
     {
         let DegInRad = InArray[i] / 180 * Math.PI;
-        let temp_thisX = cx + Math.cos(DegInRad) * RadiusBig
-        let temp_thisY = cy - Math.sin(DegInRad) * RadiusBig
+        let temp_thisX = cx + Math.cos(DegInRad) * GLOBAL_visual_ring_radius
+        let temp_thisY = cy - Math.sin(DegInRad) * GLOBAL_visual_ring_radius
         temp_polygon_pos.push( [temp_thisX,temp_thisY] )
 
-        if (field_visual_chord_dott.checked)
+        if (GLOBAL_visual_smol_radius > 0)
         {
             KanvasContext.beginPath();
-            KanvasContext.arc(temp_thisX, temp_thisY, RadiusSmol, 0, Math.PI * 2);
+            KanvasContext.arc(temp_thisX, temp_thisY, GLOBAL_visual_smol_radius, 0, Math.PI * 2);
             KanvasContext.stroke();  
             KanvasContext.fill()
         }
@@ -607,10 +658,10 @@ function POwO_canvas_draw(InArray)
             KanvasContext.fillStyle = "rgba(" + COLOR_MAIN + ",0.25)"
             KanvasContext.fill()
         }
-        if (field_visual_chord_line.checked)
+        if (GLOBAL_visual_poly_thickness > 0)
         {
             KanvasContext.strokeStyle = "rgba(" + COLOR_MAIN + ",0.5)"
-            KanvasContext.lineWidth = 1
+            KanvasContext.lineWidth = GLOBAL_visual_poly_thickness
             KanvasContext.stroke()
         }
 
@@ -634,18 +685,19 @@ function POwO_canvas_collect()
         //log it
         let Logarithm = Math.log2(FactorGot)
 
-        //get the fraction
-        let LERPt = Logarithm % 1;
+        //get the fraction if we want to crop it within 360
+        let LERPt = Logarithm //% 1;
 
         //turn it into Degrees
         //here we use lerp mapping
-        let DegRes = POwO_Math_LERPmap(0,1,LERPt,0,360)
-        DegRes += 360
-        DegRes = DegRes % 360
+        //at this point, by default, DegRes now contain the correct true value
+        //but user can put it through : newAngle = factor * oldAngle + phase
+        let DegRes = POwO_Math_LERPmap(0,1,LERPt,0,360 * GLOBAL_visual_angle_factor) //weird enough, angle factor can decide how much should a circle be
+        DegRes += GLOBAL_visual_angle_phase
 
         if (isNaN(DegRes))
         {
-            
+            //do nothing
         }
         else
         {
@@ -741,13 +793,21 @@ const field_filter_hghshlf_gain = POwO_docgetel("field_filter_hghshlf_gain");
 
 const field_visual_color_main = POwO_docgetel("field_visual_color_main");
 const field_visual_color_bg = POwO_docgetel("field_visual_color_bg");
+const field_visual_ring_radius = POwO_docgetel("field_visual_ring_radius")
+const field_visual_ring_line = POwO_docgetel("field_visual_ring_line")
+const field_visual_ring_margin = POwO_docgetel("field_visual_ring_margin")
 const field_visual_chord_dott = POwO_docgetel("field_visual_chord_dott")
 const field_visual_chord_line = POwO_docgetel("field_visual_chord_line")
 const field_visual_chord_fill = POwO_docgetel("field_visual_chord_fill")
+const field_visual_angle_factor = POwO_docgetel("field_visual_angle_factor")
+const field_visual_angle_phase = POwO_docgetel("field_visual_angle_phase")
+const field_visual_edomark_radius = POwO_docgetel("field_visual_edomark_radius")
+const field_visual_edomark_thickness = POwO_docgetel("field_visual_edomark_thickness")
+const field_visual_edomark_fontSize = POwO_docgetel("field_visual_edomark_fontSize")
+const field_visual_edomark_fontRadius = POwO_docgetel("field_visual_edomark_fontRadius")
 
 const field_control_currentChoice = POwO_docgetel("CONTROL_print")
 const field_adktSetup = POwO_docgetel("field_adktSetup")
-
 
 //frequency related stuffs
 var GLOBAL_edo = 12;
@@ -783,6 +843,19 @@ var GLOBAL_vol_dlt = 1/256;
 var GLOBAL_filter_delta_freq = 10;
 var GLOBAL_filter_delta_qval = 1;
 var GLOBAL_filter_delta_decb = 1/16;
+
+//visual
+var GLOBAL_visual_ring_radius = 200
+var GLOBAL_visual_ring_thickness = 1
+var GLOBAL_visual_ring_margin = 50
+var GLOBAL_visual_smol_radius = 25
+var GLOBAL_visual_poly_thickness = 1
+var GLOBAL_visual_angle_factor = 1
+var GLOBAL_visual_angle_phase = 0
+var GLOBAL_visual_edomark_radius = 10
+var GLOBAL_visual_edomark_thickness = 1
+var GLOBAL_visual_edomark_fontSize = 20
+var GLOBAL_visual_edomark_fontRadius = 225
 
 
 
@@ -949,6 +1022,27 @@ document.addEventListener("keyup", (event) =>
 
 //---- ---- ---- ---- visual stuffs
 
+function POwO_visual_resizeCanvas()
+{
+    let kanvas = POwO_docgetel("kanvas");
+    let size = 
+    Math.max(
+        GLOBAL_visual_ring_radius * 2 + 
+        Math.max(
+            GLOBAL_visual_smol_radius
+            ,
+            GLOBAL_visual_edomark_radius
+        )
+        ,
+        GLOBAL_visual_edomark_fontRadius * 2
+    )
+    + GLOBAL_visual_ring_margin * 2
+
+
+    kanvas.width = size
+    kanvas.height = size
+}
+
 field_visual_color_main.addEventListener("change",(event) => {
     COLOR_MAIN = field_visual_color_main.value
     let temp_newcolor = "rgba(" + COLOR_MAIN + ",0.1)"
@@ -968,6 +1062,52 @@ field_visual_color_bg.addEventListener("change",(event) => {
     document.body.style.backgroundColor = "rgba(" + field_visual_color_bg.value + ")"
 })
 
+field_visual_ring_radius.addEventListener("change",(event) => {
+    GLOBAL_visual_ring_radius = Number(field_visual_ring_radius.value)
+    POwO_visual_resizeCanvas()
+})
+
+field_visual_ring_line.addEventListener("change",(event) => {
+    GLOBAL_visual_ring_thickness = Number(field_visual_ring_line.value)
+})
+
+field_visual_ring_margin.addEventListener("change",(event)=>{
+    GLOBAL_visual_ring_margin = Number(field_visual_ring_margin.value)
+    POwO_visual_resizeCanvas()
+})
+
+field_visual_chord_dott.addEventListener("change",(event) => {
+    GLOBAL_visual_smol_radius = Number(field_visual_chord_dott.value)
+    POwO_visual_resizeCanvas()
+})
+
+field_visual_chord_line.addEventListener("change",(event) => {
+    GLOBAL_visual_poly_thickness = Number(field_visual_chord_line.value)
+})
+
+field_visual_angle_factor.addEventListener("change",(event) => {
+    GLOBAL_visual_angle_factor = Number(field_visual_angle_factor.value)
+})
+
+field_visual_angle_phase.addEventListener("change",(event) => {
+    GLOBAL_visual_angle_phase = Number(field_visual_angle_phase.value)
+})
+
+field_visual_edomark_radius.addEventListener("change",(event) => {
+    GLOBAL_visual_edomark_radius = Number(field_visual_edomark_radius.value)
+})
+
+field_visual_edomark_thickness.addEventListener("change",(event) => {
+    GLOBAL_visual_edomark_thickness = Number(field_visual_edomark_thickness.value)
+})
+
+field_visual_edomark_fontSize.addEventListener("change",(event) => {
+    GLOBAL_visual_edomark_fontSize = Number(field_visual_edomark_fontSize.value)
+})
+
+field_visual_edomark_fontRadius.addEventListener("change",(event) => {
+    GLOBAL_visual_edomark_fontRadius = Number(field_visual_edomark_fontRadius.value)
+})
 
 //---- ---- ---- ---- mobile controls
 
