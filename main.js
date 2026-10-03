@@ -695,15 +695,32 @@ function POwO_canvas_collect()
         let DegRes = POwO_Math_LERPmap(0,1,LERPt,0,360 * GLOBAL_visual_angle_factor) //weird enough, angle factor can decide how much should a circle be
         DegRes += GLOBAL_visual_angle_phase
 
-        if (isNaN(DegRes))
+        if (Number.isFinite(DegRes))
         {
-            //do nothing
+            //it is a processable number
+
+            //at this point DegRes might be negative
+            while(DegRes < 0){ DegRes = DegRes + 360 }
+
+            //and some of them might be bigger than 360
+            DegRes = DegRes % 360
+
+            //angle is ready
+            if (isNaN(DegRes))
+            {
+                //do nothing
+            }
+            else
+            {
+                OutArray.push(DegRes)
+            }
         }
         else
         {
-            OutArray.push(DegRes)
+            //DegRes is either -Infinite, NaN, or Infinite
+            //do nothing, ignore it
+            //throw it away
         }
-        
     }
 
     OutArray.sort(function(a, b) {return a - b;});//so that the polygon will not twist
@@ -826,7 +843,7 @@ if (GLOBAL_Latice_Height * GLOBAL_Latice_Width !== Array_Rectangles.length){cons
 var GLOBAL_freq = [];
 var GLOBAL_freq_Index = 0; //to know which freq List is the user using
 var GLOBAL_freq_List0 = []; //these are like frequency presets defined by users
-var GLOBAL_freq_List1 = []; //these lists can be accessed by pressing 'o','p','[',']'
+var GLOBAL_freq_List1 = []; //these lists can be accessed by pressing 'SHIFT+5,6,7,8'
 var GLOBAL_freq_List2 = [];
 var GLOBAL_freq_List3 = [];
 
@@ -847,7 +864,7 @@ var GLOBAL_filter_delta_decb = 1/16;
 //visual
 var GLOBAL_visual_ring_radius = 200
 var GLOBAL_visual_ring_thickness = 1
-var GLOBAL_visual_ring_margin = 50
+var GLOBAL_visual_ring_margin = 75
 var GLOBAL_visual_smol_radius = 25
 var GLOBAL_visual_poly_thickness = 1
 var GLOBAL_visual_angle_factor = 1
